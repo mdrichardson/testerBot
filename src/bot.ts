@@ -3,7 +3,7 @@
 
 import { TurnContext } from 'botbuilder';
 
-export class MyBot {
+export class MultiChannelBot {
     /**
      * Use onTurn to handle an incoming activity, received from a user, process it, and reply as needed
      *

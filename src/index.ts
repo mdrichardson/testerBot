@@ -8,7 +8,7 @@ import * as restify from 'restify';
 import { BotFrameworkAdapter } from 'botbuilder';
 
 // This bot's main dialog.
-import { MyBot } from './bot';
+import { MultiChannelBot } from './bot';
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -29,12 +29,12 @@ adapter.onTurnError = async (context, error) => {
 };
 
 // Create the main dialog.
-const myBot = new MyBot();
+const multiChannelBot = new MultiChannelBot();
 
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
         // Route to main dialog.
-        await myBot.onTurn(context);
+        await multiChannelBot.onTurn(context);
     });
 });
