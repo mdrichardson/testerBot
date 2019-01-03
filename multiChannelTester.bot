@@ -1,5 +1,6 @@
 {
     "name": "multiChannelTester",
+    "description": "",
     "services": [
         {
             "type": "endpoint",
@@ -8,8 +9,30 @@
             "appId": "",
             "appPassword": "",
             "id": "1"
+        },
+        {
+            "type": "blob",
+            "name": "vmicricmain",
+            "serviceName": "vmicricmain",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "subscriptionId": "0389857f-2464-451b-ac83-5f54d565b1a7",
+            "resourceGroup": "v-micricMAIN",
+            "connectionString": "LssP9ENCS9RQLga0PS1rZA==!rbVvpv7GfpC0C8LkAeULe4L9ifKc+qBWOOzSUAHMWLH8anOtE20zKIla35ZwjHM/rNdON5xnjha1UN88fH+eCU2CgY0OoOwvrdO1noTJLmu4dFptRl3g88ur920jELRmZtUuh+ueMOBvKigkDrUbqL55UwI3pUzvQROkEkV0CwOHJrWZRzQWj7nIgiLDBz1b5gKrE/h+geVRiufWWj9P6dlhcDjaZ2MLkLI1IW/pFoptT8DsftegsENUJHOlNemd",
+            "container": "multichanneltester",
+            "id": "64"
+        },
+        {
+            "type": "appInsights",
+            "name": "multiChannelTesterb7w5by",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "subscriptionId": "0389857f-2464-451b-ac83-5f54d565b1a7",
+            "resourceGroup": "v-micricMAIN",
+            "serviceName": "multiChannelTesterb7w5by",
+            "instrumentationKey": "35/T26mR6q0Q5mbNOfnVng==!0J115hOCy/7dAlmJAeB7E3VV44LwmI7S7DNCXzoTw2UbA25cHa0/JnRL5RkfcQnQ",
+            "apiKeys": {},
+            "id": "161"
         }
     ],
-    "padlock": "",
+    "padlock": "f64Jj/FigXs1Rte75m3ZCA==!ZbawJSy396zJLbqo25GeeRc/usg0NjJUckpXL0h2TkXAQ4aPI6TmDnYqSiy4CZtF",
     "version": "2.0"
 }
