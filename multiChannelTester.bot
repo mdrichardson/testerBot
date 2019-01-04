@@ -17,7 +17,7 @@
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "subscriptionId": "0389857f-2464-451b-ac83-5f54d565b1a7",
             "resourceGroup": "v-micricMAIN",
-            "connectionString": "LssP9ENCS9RQLga0PS1rZA==!rbVvpv7GfpC0C8LkAeULe4L9ifKc+qBWOOzSUAHMWLH8anOtE20zKIla35ZwjHM/rNdON5xnjha1UN88fH+eCU2CgY0OoOwvrdO1noTJLmu4dFptRl3g88ur920jELRmZtUuh+ueMOBvKigkDrUbqL55UwI3pUzvQROkEkV0CwOHJrWZRzQWj7nIgiLDBz1b5gKrE/h+geVRiufWWj9P6dlhcDjaZ2MLkLI1IW/pFoptT8DsftegsENUJHOlNemd",
+            "connectionString": "cWmbJCJIX6UHmisUcKf3RA==!lT/AWDc2dPTupnKSDgzPt6E7Yvy5p61rfwGekJIcBNwwvcjORoQVxU8pzfJK7r68z36D9J/GWRxs0fEIWgbVieO9CxxCiHOjt5DfyYn0lwC8+tR9OHkVo3q+uGP4q9b73UB8oisEpmVtx7AnhHJtnuZxJf2WX0uiAy6ZxP0mywQt7L3HvXMJa3+AGm6An60zJt06BHI8u7xntoLG60Mij0YV5cDztDFDZEO/1YS236vOXXQLoD6g4CZH/bU0yL6B",
             "container": "multichanneltester",
             "id": "64"
         },
@@ -28,9 +28,19 @@
             "subscriptionId": "0389857f-2464-451b-ac83-5f54d565b1a7",
             "resourceGroup": "v-micricMAIN",
             "serviceName": "multiChannelTesterb7w5by",
-            "instrumentationKey": "35/T26mR6q0Q5mbNOfnVng==!0J115hOCy/7dAlmJAeB7E3VV44LwmI7S7DNCXzoTw2UbA25cHa0/JnRL5RkfcQnQ",
+            "instrumentationKey": "iMG2LT8qtPcfKGLB7qqzGg==!dCAgL+xhh53yYChOOvlxdKHGflM+TU2Gfx2XaeJ/27Z8jJXMbyBKOvHKb81W5f8k",
             "apiKeys": {},
             "id": "161"
+        },
+        {
+            "type": "luis",
+            "name": "v-micricMultiChannelTester-b557",
+            "appId": "49449ab6-4be7-4fd1-87e0-ff07df124f8e",
+            "version": "v0.1",
+            "authoringKey": "pom9ihjT0wDICT9wp6wvgQ==!698XMdV52HawhR4AgzcAQ1EceSpJ/y6JFIsK7EShanxiTdPfwMS82zUQ/FmuFxKA",
+            "subscriptionKey": "GUa+IV2QWF+WQj1R6gdVCw==!xyHrpTp6pK4bwMZwfOvEE8RWqoIpjDzxzPOR9rjV5al4mV8n7wyrkZ6eh2NhrHwl",
+            "region": "westus",
+            "id": "211"
         }
     ],
     "padlock": "f64Jj/FigXs1Rte75m3ZCA==!ZbawJSy396zJLbqo25GeeRc/usg0NjJUckpXL0h2TkXAQ4aPI6TmDnYqSiy4CZtF",

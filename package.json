@@ -19,6 +19,11 @@
     },
     "dependencies": {
         "botbuilder": "^4.2.0",
+        "botbuilder-ai": "^4.2.0",
+        "botbuilder-azure": "^4.2.0",
+        "botbuilder-dialogs": "^4.2.0",
+        "botframework-config": "^4.2.0",
+        "dotenv": "^6.2.0",
         "replace": "^1.0.0",
         "restify": "^7.2.3"
     },
