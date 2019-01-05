@@ -52,7 +52,6 @@ export class MultiChannelBot {
 
         // Create top-level dialog(s)
         this.dialogs = new DialogSet(this.dialogState);
-        this.dialogs.add(new Testing('testingDialog'));
 
         this.conversationState = conversationState;
         this.userState = userState;
@@ -145,9 +144,9 @@ export class MultiChannelBot {
                         `;
                         await context.sendActivity(`Welcome. Here\'s what I know about you:\n${userInfo}`);
 
-                        // Create a dialog context
-                        const dialogContext = await this.dialogs.createContext(context);
-                        dialogContext.beginDialog('testingDialog');
+                        // Load the Testing prompt
+                        const testing = new Testing('testingDialog');
+                        testing.displayOptions();
                     }
                 }
             }
