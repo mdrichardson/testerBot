@@ -6,7 +6,7 @@ import { LuisRecognizer } from 'botbuilder-ai';
 import { DialogContext, DialogSet, DialogState, DialogTurnResult, DialogTurnStatus } from 'botbuilder-dialogs';
 import { BotConfiguration, LuisService } from 'botframework-config';
 
-import { Greeting } from './dialogs/greeting';
+import { Testing } from './dialogs/testing';
 import { UserProfile } from './user/userProfile';
 
 // State Accessor Properties
@@ -52,7 +52,7 @@ export class MultiChannelBot {
 
         // Create top-level dialog(s)
         this.dialogs = new DialogSet(this.dialogState);
-        this.dialogs.add(new Greeting('greetingDialog'));
+        this.dialogs.add(new Testing('testingDialog'));
 
         this.conversationState = conversationState;
         this.userState = userState;
@@ -79,7 +79,7 @@ export class MultiChannelBot {
             const topIntent = LuisRecognizer.topIntent(luisResults);
 
             // Update user profile with any entries captured by LUIS
-            // This could be user responding with their name or city while we are in the middle of greeting dialog,
+            // This could be user responding with their name or city while we are in the middle of dialog,
             // or user saying something like 'i'm {userName}' while we have no active multi-turn dialog.
             await this.updateUserProfile(luisResults, context);
 
@@ -144,17 +144,58 @@ export class MultiChannelBot {
                             Locale: ${context.activity.locale},
                         `;
                         await context.sendActivity(`Welcome. Here\'s what I know about you:\n${userInfo}`);
+
+                        // Create a dialog context
+                        const dialogContext = await this.dialogs.createContext(context);
+                        dialogContext.beginDialog('testingDialog');
                     }
                 }
             }
         }
+
+        // make sure to persist state at the end of a turn.
+        await this.conversationState.saveChanges(context);
+        await this.userState.saveChanges(context);
     }
 
+    /**
+     * Look at the LUIS results and determine if we need to handle
+     * an interruptions due to a Help or Cancel intent
+     *
+     * @param {DialogContext} dialogContext - dialog context
+     * @param {LuisResults} luisResults - LUIS recognizer results
+     */
     private isTurnInterrupted = async (dialogContext: DialogContext, luisResults: RecognizerResult) => {
-        return true;
+        const topIntent = LuisRecognizer.topIntent(luisResults);
+
+        // see if there are any conversation interrupts we need to handle
+        // TODO: Add LUIS interrupts
+        switch (topIntent) {
+            case 'INTERRUPT':
+                if (dialogContext.activeDialog) {
+                    // cancel all active dialog (clean the stack)
+                    await dialogContext.cancelAllDialogs();
+                    await dialogContext.context.sendActivity(`Ok.  I've cancelled our last activity.`);
+                } else {
+                    await dialogContext.context.sendActivity(`I don't have anything to cancel.`);
+                }
+                return true; // is interrupt
+            default:
+                return false; // is not interrupt
+        }
     }
 
+    /**
+     * Helper function to update user profile with entities returned by LUIS.
+     *
+     * @param {LuisResults} luisResults - LUIS recognizer results
+     * @param {TurnContext} context - TurnContext context
+     */
+    // TODO: Add LUIS entities -  See BasicBot for examples
     private updateUserProfile = async (luisResults: RecognizerResult, context: TurnContext) => {
-        return true;
+        // Do we have any entities?
+        if (Object.keys(luisResults.entities).length !== 1) {
+            return true;
+        }
     }
 }
