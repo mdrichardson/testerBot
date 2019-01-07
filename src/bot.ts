@@ -6,15 +6,21 @@ import { LuisRecognizer } from 'botbuilder-ai';
 import { DialogContext, DialogSet, DialogState, DialogTurnResult, DialogTurnStatus } from 'botbuilder-dialogs';
 import { BotConfiguration, LuisService } from 'botframework-config';
 
-import { Testing } from './dialogs/testing';
+import { GeneralDialog } from './dialogs/general';
+import { TestingDialog } from './dialogs/testing';
 import { UserProfile } from './user/userProfile';
 
+import { IDialogIds } from './dialogs/interfaces';
+
 // State Accessor Properties
-const DIALOG_STATE_PROPERTY = 'dialogState';
-const USER_PROFILE_PROPERTY = 'userProfileProperty';
+const DIALOG_STATE_PROPERTY = 'dialogStatePropertyAccessor';
+const USER_PROFILE_PROPERTY = 'userProfilePropertyAccessor';
 
 // this is the LUIS service type entry in the .bot file.
 const LUIS_CONFIGURATION = 'v-micricMultiChannelTester-b557';
+
+// Dialog IDs
+const TESTING_DIALOG_ID = 'testingOptions';
 
 export class MultiChannelBot {
     private readonly dialogs: DialogSet;
@@ -51,7 +57,8 @@ export class MultiChannelBot {
         this.dialogState = conversationState.createProperty(DIALOG_STATE_PROPERTY);
 
         // Create top-level dialog(s)
-        this.dialogs = new DialogSet(this.dialogState);
+        this.dialogs = new DialogSet(this.dialogState)
+            .add(new TestingDialog(TESTING_DIALOG_ID, this.userProfileAccessor))
 
         this.conversationState = conversationState;
         this.userState = userState;
@@ -67,11 +74,12 @@ export class MultiChannelBot {
         // Handle Message activity type, which is the main activity type for shown within a conversational interface
         // Message activities may contain text, speech, interactive cards, and binary or unknown attachments.
         // see https://aka.ms/about-bot-activity-message to learn more about the message and other activity types
+
+        // Create a dialog context
+        const dc = await this.dialogs.createContext(context);
+
         if (context.activity.type === ActivityTypes.Message) {
             let dialogResult: DialogTurnResult;
-
-            // Create a dialog context
-            const dialogContext = await this.dialogs.createContext(context);
 
             // Perform a call to LUIS to retreive results for the current activity message
             const luisResults = await this.luisRecognizer.recognize(context);
@@ -84,19 +92,19 @@ export class MultiChannelBot {
 
             // Based on LUIS topIntent, evaluate if we have an interruption.
             // Interruption here refers to user looking for help/ cancel existing dialog
-            const interrupted = await this.isTurnInterrupted(dialogContext, luisResults);
+            const interrupted = await this.isTurnInterrupted(dc, luisResults);
             if (interrupted) {
-                if (dialogContext.activeDialog !== undefined) {
+                if (dc.activeDialog !== undefined) {
                     // issue a re-prompt on the active dialog
-                    await dialogContext.repromptDialog();
+                    await dc.repromptDialog();
                 } // Else: we don't have an active dialog so we do nothing
             } else {
                 // No interruption. Continue any active dialogs
-                dialogResult = await dialogContext.continueDialog();
+                dialogResult = await dc.continueDialog();
             }
 
             // If no active dialog or no active dialog has responded
-            if (!dialogContext.context.responded) {
+            if (!dc.context.responded) {
                 // Switch on return results from an active dialog
                 switch (dialogResult.status) {
                     // no active dialogs
@@ -106,7 +114,7 @@ export class MultiChannelBot {
                         switch (topIntent) {
                             default:
                                 // Let the user know we didn't recognize their intent
-                                await dialogContext.context.sendActivity(`I don't understand and neither does LUIS.`);
+                                await dc.context.sendActivity(`I don't understand and neither does LUIS.`);
                                 break;
                         }
                         break;
@@ -118,7 +126,7 @@ export class MultiChannelBot {
                         break;
                     default:
                         // Unrecognized status from child dialog. Cancel all dialogs.
-                        await dialogContext.cancelAllDialogs();
+                        await dc.cancelAllDialogs();
                         break;
                 }
             }
@@ -143,10 +151,7 @@ export class MultiChannelBot {
                             Locale: ${context.activity.locale},
                         `;
                         await context.sendActivity(`Welcome. Here\'s what I know about you:\n${userInfo}`);
-
-                        // Load the Testing prompt
-                        const testing = new Testing('testingDialog');
-                        testing.displayOptions();
+                        await dc.beginDialog(TESTING_DIALOG_ID);
                     }
                 }
             }
@@ -161,22 +166,22 @@ export class MultiChannelBot {
      * Look at the LUIS results and determine if we need to handle
      * an interruptions due to a Help or Cancel intent
      *
-     * @param {DialogContext} dialogContext - dialog context
+     * @param {dc} dc - dialog context
      * @param {LuisResults} luisResults - LUIS recognizer results
      */
-    private isTurnInterrupted = async (dialogContext: DialogContext, luisResults: RecognizerResult) => {
+    private isTurnInterrupted = async (dc: DialogContext, luisResults: RecognizerResult) => {
         const topIntent = LuisRecognizer.topIntent(luisResults);
 
         // see if there are any conversation interrupts we need to handle
         // TODO: Add LUIS interrupts
         switch (topIntent) {
             case 'INTERRUPT':
-                if (dialogContext.activeDialog) {
+                if (dc.activeDialog) {
                     // cancel all active dialog (clean the stack)
-                    await dialogContext.cancelAllDialogs();
-                    await dialogContext.context.sendActivity(`Ok.  I've cancelled our last activity.`);
+                    await dc.cancelAllDialogs();
+                    await dc.context.sendActivity(`Ok.  I've cancelled our last activity.`);
                 } else {
-                    await dialogContext.context.sendActivity(`I don't have anything to cancel.`);
+                    await dc.context.sendActivity(`I don't have anything to cancel.`);
                 }
                 return true; // is interrupt
             default:
