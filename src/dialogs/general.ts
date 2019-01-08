@@ -1,5 +1,5 @@
 import { StatePropertyAccessor } from 'botbuilder';
-import { ChoicePrompt, ComponentDialog, WaterfallDialog, WaterfallStepContext } from 'botbuilder-dialogs';
+import { ChoicePrompt, ComponentDialog, TextPrompt, WaterfallDialog, WaterfallStepContext } from 'botbuilder-dialogs';
 import { UserProfile } from '../user/userProfile';
 
 import { IDialogIds } from './interfaces';
@@ -20,14 +20,15 @@ export class GeneralDialog extends ComponentDialog {
         this.dialogIds = dialogIds;
 
         // Define conversation flow
-        this.addDialog(new WaterfallDialog<UserProfile>('generalDialogs', [
+        this.addDialog(new WaterfallDialog<UserProfile>('generalDialogsInternal', [
             this.promptForOptionSelection.bind(this),
-            this.conductTest.bind(this),
+            this.directToTest.bind(this),
             this.restartAsNecessary.bind(this),
         ]));
 
         // define dialogs to be used
-        this.addDialog(new ChoicePrompt('choicePrompt2'));
+        this.addDialog(new ChoicePrompt('choicePrompt'));
+        this.addDialog(new TextPrompt('textPrompt'));
 
         // Save off our state accessor for later use
         this.userProfileAccessor = userProfileAccessor;
@@ -35,31 +36,40 @@ export class GeneralDialog extends ComponentDialog {
 
     // Ask the user what they'd like to test and then load the appropriate dialogs for that
     private promptForOptionSelection = async (step: WaterfallStepContext<UserProfile>) => {
-        return await step.prompt('choicePrompt2', {
-            prompt: 'What would you like to test?',
-            retryPrompt: 'I didn\'t understand that. Please click an option',
-            /* tslint:disable:object-literal-sort-keys */
+        return await step.prompt('choicePrompt', {
             choices: [
-                'General',
-                'Prompts',
-                'Rich Cards',
-                'Data Storage',
-                'Proactive Messages',
-                'LUIS',
-                'QnA Maker',
+                'Text echo',
+                'Send Attachments',
             ],
+            prompt: 'What general function would you like to test?',
+            retryPrompt: 'I didn\'t understand that. Please click an option',
         });
     }
 
-    private conductTest = async (step: WaterfallStepContext<UserProfile>) => {
-        const inputToDialogConverter = {
-        };
-        const toAdd = inputToDialogConverter[step.result.value];
-        this.addDialog(toAdd);
-        return await step.endDialog();
+    private directToTest = async (step: WaterfallStepContext<UserProfile>) => {
+        switch (step.result.value) {
+            case 'Text echo':
+                return await this.testEcho(step);
+            case 'Send attachments':
+                return await this.testAttachments(step);
+            default:
+                return await step.next();
+        }
+    }
+    
+    // TODO: Create the testEcho and testAttachemnts prompts!!!
+    private testEcho = async (step: WaterfallStepContext<UserProfile>) => {
+        console.log('ok');
+        return await step.next();
+    }
+
+    private testAttachments = async (step: WaterfallStepContext<UserProfile>) => {
+        console.log('ok');
+        return await step.next();
     }
 
     private restartAsNecessary = async (step: WaterfallStepContext<UserProfile>) => {
+        console.log('last');
         const inputToDialogConverter = {
             'Prompts': 'promptsDialogSet',
             'Rich Cards': 'richCardsDialogSet',

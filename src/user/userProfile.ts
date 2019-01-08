@@ -7,18 +7,21 @@
  */
 class UserProfile {
     // member variables
-    public name: string;
-    public city: string;
+    public testsExecuted: string[];
+    public generalExecuted: string[];
     /**
      * Constructor. Members initialized with undefined,
      *  if no values provided via constructor
+     * 
+     * The *Executed variables are meant to contain strings of dialog test that have been
+     * COMPLETELY executed and will then be hidden
      *
-     * @param name string
-     * @param city string
+     * @param testsExecuted string
+     * @param generalExecuted string
      */
-    constructor(name?: string, city?: string) {
-      this.name = name || undefined;
-      this.city = city || undefined;
+    constructor(testsExecuted?: string[], generalExecuted?: string[]) {
+      this.testsExecuted = testsExecuted || [];
+      this.generalExecuted = generalExecuted || [];
     }
   }
 

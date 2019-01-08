@@ -23,7 +23,7 @@ export class TestingDialog extends ComponentDialog {
         this.userProfileAccessor = userProfileAccessor;
 
         // Define conversation flow
-        this.addDialog(new WaterfallDialog<UserProfile>('test', [
+        this.addDialog(new WaterfallDialog<UserProfile>('testDialogs', [
             this.initializeStateStep.bind(this),
             this.promptForTesting.bind(this),
             this.createAppropriateWaterfall.bind(this),
@@ -52,25 +52,28 @@ export class TestingDialog extends ComponentDialog {
 
     // Ask the user what they'd like to test and then load the appropriate dialogs for that
     private promptForTesting = async (step: WaterfallStepContext<UserProfile>) => {
+        const choices = [
+            'General',
+            'Prompts',
+            'Rich Cards',
+            'Data Storage',
+            'Proactive Messages',
+            'LUIS',
+            'QnA Maker',
+        ];
+        // Remove choices that have already been fully tested (in case user restarts dialog)
+        const userProfile = await this.userProfileAccessor.get(step.context);
+        const alreadyChosen = userProfile.testsExecuted;
+        const displayedChoices = choices.filter((c) => alreadyChosen.indexOf(c) === -1);
+
         return await step.prompt('choicePrompt', {
+            choices: displayedChoices,
             prompt: 'What would you like to test?',
             retryPrompt: 'I didn\'t understand that. Please click an option',
-            /* tslint:disable:object-literal-sort-keys */
-            choices: [
-                'General',
-                'Prompts',
-                'Rich Cards',
-                'Data Storage',
-                'Proactive Messages',
-                'LUIS',
-                'QnA Maker',
-            ],
         });
     }
 
     private createAppropriateWaterfall = async (step: WaterfallStepContext<UserProfile>) => {
-        step.beginDialog(dialogIds.GENERAL_DIALOG_ID);
-        console.log('ok');
-        return await step.endDialog();
+        return await step.beginDialog(dialogIds.GENERAL_DIALOG_ID);
     }
 }
