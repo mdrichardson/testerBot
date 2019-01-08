@@ -3,10 +3,10 @@ import { ChoicePrompt, ComponentDialog, WaterfallDialog, WaterfallStepContext } 
 import { UserProfile } from '../user/userProfile';
 
 import { EchosDialog } from './echos';
-import { IDialogIds } from './interfaces';
 
-const dialogIds: IDialogIds = {
-    ECHOS_DIALOG_ID: 'echosDialogs',
+const dialogIds = {
+    ECHOS_DIALOG: 'echosDialogs',
+    PROMPTS_DIALOG: 'promptsDialog',
 };
 export class TestingDialog extends ComponentDialog {
 
@@ -31,7 +31,7 @@ export class TestingDialog extends ComponentDialog {
 
         // define dialogs to be used
         this.addDialog(new ChoicePrompt('choicePrompt'));
-        this.addDialog(new EchosDialog(dialogIds.ECHOS_DIALOG_ID));
+        this.addDialog(new EchosDialog(dialogIds.ECHOS_DIALOG));
     }
 
     /**
@@ -74,6 +74,6 @@ export class TestingDialog extends ComponentDialog {
     }
 
     private createAppropriateWaterfall = async (step: WaterfallStepContext<UserProfile>) => {
-        return await step.beginDialog(dialogIds.ECHOS_DIALOG_ID);
+        return await step.beginDialog(dialogIds.ECHOS_DIALOG);
     }
 }
