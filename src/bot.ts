@@ -6,11 +6,8 @@ import { LuisRecognizer } from 'botbuilder-ai';
 import { DialogContext, DialogSet, DialogState, DialogTurnResult, DialogTurnStatus } from 'botbuilder-dialogs';
 import { BotConfiguration, LuisService } from 'botframework-config';
 
-import { GeneralDialog } from './dialogs/general';
 import { TestingDialog } from './dialogs/testing';
 import { UserProfile } from './user/userProfile';
-
-import { IDialogIds } from './dialogs/interfaces';
 
 // State Accessor Properties
 const DIALOG_STATE_PROPERTY = 'dialogStatePropertyAccessor';

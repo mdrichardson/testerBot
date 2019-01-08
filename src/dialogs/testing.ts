@@ -2,11 +2,11 @@ import { StatePropertyAccessor } from 'botbuilder';
 import { ChoicePrompt, ComponentDialog, WaterfallDialog, WaterfallStepContext } from 'botbuilder-dialogs';
 import { UserProfile } from '../user/userProfile';
 
-import { GeneralDialog } from './general';
+import { EchosDialog } from './echos';
 import { IDialogIds } from './interfaces';
 
 const dialogIds: IDialogIds = {
-    GENERAL_DIALOG_ID: 'generalDialogs',
+    ECHOS_DIALOG_ID: 'echosDialogs',
 };
 export class TestingDialog extends ComponentDialog {
 
@@ -31,7 +31,7 @@ export class TestingDialog extends ComponentDialog {
 
         // define dialogs to be used
         this.addDialog(new ChoicePrompt('choicePrompt'));
-        this.addDialog(new GeneralDialog(dialogIds.GENERAL_DIALOG_ID, this.userProfileAccessor, dialogIds));
+        this.addDialog(new EchosDialog(dialogIds.ECHOS_DIALOG_ID));
     }
 
     /**
@@ -53,7 +53,7 @@ export class TestingDialog extends ComponentDialog {
     // Ask the user what they'd like to test and then load the appropriate dialogs for that
     private promptForTesting = async (step: WaterfallStepContext<UserProfile>) => {
         const choices = [
-            'General',
+            'Echos',
             'Prompts',
             'Rich Cards',
             'Data Storage',
@@ -74,6 +74,6 @@ export class TestingDialog extends ComponentDialog {
     }
 
     private createAppropriateWaterfall = async (step: WaterfallStepContext<UserProfile>) => {
-        return await step.beginDialog(dialogIds.GENERAL_DIALOG_ID);
+        return await step.beginDialog(dialogIds.ECHOS_DIALOG_ID);
     }
 }

@@ -12,7 +12,7 @@ class UserProfile {
     /**
      * Constructor. Members initialized with undefined,
      *  if no values provided via constructor
-     * 
+     *
      * The *Executed variables are meant to contain strings of dialog test that have been
      * COMPLETELY executed and will then be hidden
      *

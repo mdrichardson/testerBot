@@ -17,7 +17,7 @@
             "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             "subscriptionId": "0389857f-2464-451b-ac83-5f54d565b1a7",
             "resourceGroup": "v-micricMAIN",
-            "connectionString": "cWmbJCJIX6UHmisUcKf3RA==!lT/AWDc2dPTupnKSDgzPt6E7Yvy5p61rfwGekJIcBNwwvcjORoQVxU8pzfJK7r68z36D9J/GWRxs0fEIWgbVieO9CxxCiHOjt5DfyYn0lwC8+tR9OHkVo3q+uGP4q9b73UB8oisEpmVtx7AnhHJtnuZxJf2WX0uiAy6ZxP0mywQt7L3HvXMJa3+AGm6An60zJt06BHI8u7xntoLG60Mij0YV5cDztDFDZEO/1YS236vOXXQLoD6g4CZH/bU0yL6B",
+            "connectionString": "Tyyyx8uBzcWyzRyIlMdo1A==!fRF8fymlv5AHJ/aAFDCRVsMEM18brlDPtX7ZCmSZUV8mF/dQccj1AY6l3jPICasaZkfYOzvS0SEWgsaahClmhv/dp1sWzVwhCUSCWjbiRiitLjEucabzBpokgoOQTQ2qcAHvmX/2z7qqHXEp7csUqj/s2/HSnTMf5FQjfqrX2Bme6Ossk/WIOH8YdTQuHH2mPnGkdET4u9V/iNod1VKY7KTZDWUFjdsjJ8Uqg8EATCwHe6fKutmQNTgKCCbmDYzB",
             "container": "multichanneltester",
             "id": "64"
         },
@@ -28,7 +28,7 @@
             "subscriptionId": "0389857f-2464-451b-ac83-5f54d565b1a7",
             "resourceGroup": "v-micricMAIN",
             "serviceName": "multiChannelTesterb7w5by",
-            "instrumentationKey": "iMG2LT8qtPcfKGLB7qqzGg==!dCAgL+xhh53yYChOOvlxdKHGflM+TU2Gfx2XaeJ/27Z8jJXMbyBKOvHKb81W5f8k",
+            "instrumentationKey": "1kUWz2hVYf0y6Es8iIAOPw==!RK6DtDzqwEDDA9vUxBowxOM2GOoIqecrQnFPBDzALAXQBN/xWWDSgLD/xVph+Siz",
             "apiKeys": {},
             "id": "161"
         },
@@ -37,10 +37,18 @@
             "name": "v-micricMultiChannelTester-b557",
             "appId": "49449ab6-4be7-4fd1-87e0-ff07df124f8e",
             "version": "v0.1",
-            "authoringKey": "pom9ihjT0wDICT9wp6wvgQ==!698XMdV52HawhR4AgzcAQ1EceSpJ/y6JFIsK7EShanxiTdPfwMS82zUQ/FmuFxKA",
-            "subscriptionKey": "GUa+IV2QWF+WQj1R6gdVCw==!xyHrpTp6pK4bwMZwfOvEE8RWqoIpjDzxzPOR9rjV5al4mV8n7wyrkZ6eh2NhrHwl",
+            "authoringKey": "6QL7hRBwygbWBpjE86BUgg==!98/Vpji3edvby4rKzb0AylDS9vzIvRFT2YXD8Sw656jWvHnxSkkhAK57Fm5b50kt",
+            "subscriptionKey": "fwtrtWC3bvu/TRQ75skSnA==!dz3RRTfe4JPicBdycsLn0kJHCpW7L44zk0UM5FsNzqM0TBYizXio3qHfpM3uG7Or",
             "region": "westus",
             "id": "211"
+        },
+        {
+            "type": "endpoint",
+            "name": "production",
+            "appId": "28f50658-5a0f-43b9-9439-224ab195cb70",
+            "appPassword": "FassbYh/3+zUwevdnbgocQ==!Wqfqyv8v8sguKdI46vRjHF4+dvCFrFs9rUx9EIIDn00=",
+            "endpoint": "https://v-micricmultichanneltester.azurewebsites.net/api/messages",
+            "id": "123"
         }
     ],
     "padlock": "f64Jj/FigXs1Rte75m3ZCA==!ZbawJSy396zJLbqo25GeeRc/usg0NjJUckpXL0h2TkXAQ4aPI6TmDnYqSiy4CZtF",

@@ -1,3 +1,3 @@
 export interface IDialogIds {
-    GENERAL_DIALOG_ID: string;
-};
+    ECHOS_DIALOG_ID: string;
+}
