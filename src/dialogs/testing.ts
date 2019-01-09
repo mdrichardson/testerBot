@@ -3,8 +3,10 @@ import { ChoicePrompt, ComponentDialog, WaterfallDialog, WaterfallStepContext } 
 import { UserProfile } from '../user/userProfile';
 
 import { PromptsDialog } from './prompts';
+import { RichCardsDialog } from './richCards';
 
 const dialogIds = {
+    TESTS_MAIN: 'testsDialog',
     PROMPTS_DIALOG: 'promptsDialog',
     RICH_CARDS_DIALOG: 'richCardsDialog',
 };
@@ -32,15 +34,17 @@ export class TestingDialog extends ComponentDialog {
         this.userProfileAccessor = userProfileAccessor;
 
         // Define conversation flow
-        this.addDialog(new WaterfallDialog<UserProfile>('testDialogs', [
+        this.addDialog(new WaterfallDialog<UserProfile>(dialogIds.TESTS_MAIN, [
             this.initializeStateStep.bind(this),
             this.promptForTesting.bind(this),
             this.createAppropriateWaterfall.bind(this),
+            this.restart.bind(this),
         ]));
 
         // define dialogs to be used
         this.addDialog(new ChoicePrompt('choicePrompt'));
         this.addDialog(new PromptsDialog(dialogIds.PROMPTS_DIALOG));
+        this.addDialog(new RichCardsDialog(dialogIds.RICH_CARDS_DIALOG));
     }
 
     /**
@@ -77,5 +81,9 @@ export class TestingDialog extends ComponentDialog {
             default:
                 return await step.endDialog();
         }
+    }
+
+    private restart = async (step: WaterfallStepContext) => {
+        return await step.beginDialog(dialogIds.TESTS_MAIN);
     }
 }
