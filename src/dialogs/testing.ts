@@ -3,6 +3,7 @@ import { ChoicePrompt, ComponentDialog, WaterfallDialog, WaterfallStepContext } 
 import { UserProfile } from '../user/userProfile';
 
 import { EchosDialog } from './echos';
+import { PromptsDialog } from './prompts';
 
 const dialogIds = {
     ECHOS_DIALOG: 'echosDialogs',
@@ -32,6 +33,7 @@ export class TestingDialog extends ComponentDialog {
         // define dialogs to be used
         this.addDialog(new ChoicePrompt('choicePrompt'));
         this.addDialog(new EchosDialog(dialogIds.ECHOS_DIALOG));
+        this.addDialog(new PromptsDialog(dialogIds.PROMPTS_DIALOG));
     }
 
     /**
@@ -61,19 +63,21 @@ export class TestingDialog extends ComponentDialog {
             'LUIS',
             'QnA Maker',
         ];
-        // Remove choices that have already been fully tested (in case user restarts dialog)
-        const userProfile = await this.userProfileAccessor.get(step.context);
-        const alreadyChosen = userProfile.testsExecuted;
-        const displayedChoices = choices.filter((c) => alreadyChosen.indexOf(c) === -1);
-
         return await step.prompt('choicePrompt', {
-            choices: displayedChoices,
+            choices: choices,
             prompt: 'What would you like to test?',
             retryPrompt: 'I didn\'t understand that. Please click an option',
         });
     }
 
     private createAppropriateWaterfall = async (step: WaterfallStepContext<UserProfile>) => {
-        return await step.beginDialog(dialogIds.ECHOS_DIALOG);
+        switch (step.result.value) {
+            case 'Echos':
+                return await step.beginDialog(dialogIds.ECHOS_DIALOG);
+            case 'Prompts':
+                return await step.beginDialog(dialogIds.PROMPTS_DIALOG);
+            default:
+                return await step.endDialog();
+        }
     }
 }

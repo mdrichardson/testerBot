@@ -1,7 +1,6 @@
 import { AttachmentPrompt, ChoicePrompt, ComponentDialog, TextPrompt, WaterfallDialog, WaterfallStepContext } from 'botbuilder-dialogs';
 
 const choices = {
-    /* tslint:disable:object-literal-sort-keys */
     echo: 'Text Echo',
     attachment: 'Attachment Echo',
     back: 'Back',
@@ -56,11 +55,7 @@ export class EchosDialog extends ComponentDialog {
 
         // Display prompt
         return await step.prompt(promptIds.CHOICE, {
-            choices: [
-                choices.echo,
-                choices.attachment,
-                choices.back,
-            ],
+            choices: Object.keys(choices).map(key => choices[key]),
             prompt: 'What echo function would you like to test?',
             retryPrompt: 'I didn\'t understand that. Please click an option',
         });
