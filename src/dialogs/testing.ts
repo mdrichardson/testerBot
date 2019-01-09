@@ -6,6 +6,16 @@ import { PromptsDialog } from './prompts';
 
 const dialogIds = {
     PROMPTS_DIALOG: 'promptsDialog',
+    RICH_CARDS_DIALOG: 'richCardsDialog',
+};
+
+const choices = {
+    prompts: 'Prompts',
+    richCards: 'Rich Cards',
+    dataStorage: 'Data Storage',
+    proactive: 'Proactive Messages',
+    luis: 'LUIS',
+    qnaMaker: 'QnA Maker',
 };
 export class TestingDialog extends ComponentDialog {
 
@@ -51,16 +61,8 @@ export class TestingDialog extends ComponentDialog {
 
     // Ask the user what they'd like to test and then load the appropriate dialogs for that
     private promptForTesting = async (step: WaterfallStepContext<UserProfile>) => {
-        const choices = [
-            'Prompts',
-            'Rich Cards',
-            'Data Storage',
-            'Proactive Messages',
-            'LUIS',
-            'QnA Maker',
-        ];
         return await step.prompt('choicePrompt', {
-            choices: choices,
+            choices: Object.keys(choices).map(key => choices[key]),
             prompt: 'What would you like to test?',
             retryPrompt: 'I didn\'t understand that. Please click an option',
         });
@@ -68,8 +70,10 @@ export class TestingDialog extends ComponentDialog {
 
     private createAppropriateWaterfall = async (step: WaterfallStepContext<UserProfile>) => {
         switch (step.result.value) {
-            case 'Prompts':
+            case choices.prompts:
                 return await step.beginDialog(dialogIds.PROMPTS_DIALOG);
+            case choices.richCards:
+                return await step.beginDialog(dialogIds.RICH_CARDS_DIALOG);
             default:
                 return await step.endDialog();
         }
