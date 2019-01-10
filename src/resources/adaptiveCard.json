@@ -1,0 +1,126 @@
+{
+    "type": "AdaptiveCard",
+    "body": [
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "ImageSet",
+                    "images": [
+                        {
+                            "type": "Image",
+                            "url": "https://via.placeholder.com/150?text=placeholder+image",
+                            "size": "Medium"
+                        },
+                        {
+                            "type": "Image",
+                            "url": "https://via.placeholder.com/300?text=placeholder+image",
+                            "size": "Medium"
+                        },
+                        {
+                            "type": "Image",
+                            "url": "https://via.placeholder.com/150?text=placeholder+image",
+                            "size": "Medium"
+                        }
+                    ]
+                },
+                {
+                    "type": "FactSet",
+                    "facts": [
+                        {
+                            "title": "Fact 1",
+                            "value": "Value 1"
+                        },
+                        {
+                            "title": "Fact 2",
+                            "value": "Value 2"
+                        }
+                    ]
+                },
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Columns test"
+                                }
+                            ],
+                            "width": "stretch"
+                        },
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "Image",
+                                    "url": "https://via.placeholder.com/150?text=placeholder+image"
+                                }
+                            ],
+                            "width": "stretch"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Media",
+            "poster": "https://adaptivecards.io/content/poster-video.png",
+            "sources": [
+                {
+                    "mimeType": "video/mp4",
+                    "url": "https://adaptivecardsblob.blob.core.windows.net/assets/AdaptiveCardsOverviewVideo.mp4"
+                }
+            ]
+        },
+        {
+            "type": "Input.Text",
+            "id": "text",
+            "placeholder": "Placeholder text"
+        },
+        {
+            "type": "Input.Date",
+            "id": "date"
+        },
+        {
+            "type": "Input.Time",
+            "id": "time"
+        },
+        {
+            "type": "Input.Number",
+            "id": "number",
+            "placeholder": "Placeholder text"
+        },
+        {
+            "type": "Input.ChoiceSet",
+            "id": "choice",
+            "placeholder": "Placeholder text",
+            "choices": [
+                {
+                    "title": "Choice 1",
+                    "value": "Choice 1"
+                },
+                {
+                    "title": "Choice 2",
+                    "value": "Choice 2"
+                }
+            ],
+            "style": "expanded"
+        },
+        {
+            "type": "Input.Toggle",
+            "id": "toggle",
+            "title": "New Input.Toggle",
+            "value": "false"
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.Submit",
+            "title": "Submit",
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.0"
+}

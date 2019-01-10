@@ -23,8 +23,6 @@ const loadFromEnv = config({ path: ENV_FILE });
 const BOT_FILE = path.join(__dirname, '..', (process.env.botFilePath || ''));
 let botConfig: BotConfiguration;
 
-console.log(BOT_FILE);
-
 try {
     // Read bot configuration from .bot file.
     botConfig = BotConfiguration.loadSync(BOT_FILE, process.env.botFileSecret);

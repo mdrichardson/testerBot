@@ -96,7 +96,12 @@ export class MultiChannelBot {
                     await dc.repromptDialog();
                 } // Else: we don't have an active dialog so we do nothing
             } else {
-                // No interruption. Continue any active dialogs
+                // No interruption
+                // Display any information sent by the user sent through a postback, which is normally hidden, for debugging purposes
+                if (dc.context.activity.type === 'message' && dc.context.activity.channelData.postback) {
+                    dc.context.sendActivity(`You sent this input, which is normally hidden:\n${JSON.stringify(dc.context.activity.value)}`);
+                }
+                // Continue any active dialogs
                 dialogResult = await dc.continueDialog();
             }
 

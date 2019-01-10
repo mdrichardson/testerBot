@@ -86,7 +86,7 @@ export class PromptsDialog extends ComponentDialog {
         // Display prompt
         return await step.prompt(promptIds.CHOICE, {
             choices: Object.keys(choices).map(key => choices[key]),
-            prompt: 'What prompt function would you like to test?',
+            prompt: 'What [Prompt] would you like to test?',
             retryPrompt: 'I didn\'t understand that. Please click an option',
         });
     }
