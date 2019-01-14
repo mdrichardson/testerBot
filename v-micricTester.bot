@@ -1,0 +1,47 @@
+{
+    "name": "v-micricTester",
+    "description": "",
+    "services": [
+        {
+            "type": "endpoint",
+            "appId": "",
+            "appPassword": "",
+            "endpoint": "http://localhost:3978/api/messages",
+            "id": "1",
+            "name": "development"
+        },
+        {
+            "type": "endpoint",
+            "appId": "8a4e561c-a361-4d49-83f0-075e2b95d712",
+            "appPassword": "HC/EHYke6sqA8N3ccwDcOg==!hDtsBbr/1fBOMwl2rBoa7EqeCE14uTgSUMqiA25Ovoo=",
+            "endpoint": "https://vmicrictesterdqt8.azurewebsites.net/api/messages",
+            "id": "34",
+            "name": "production"
+        },
+        {
+            "type": "luis",
+            "appId": "c48bf96f-3183-4b5b-ad97-d57ce1354992",
+            "authoringKey": "191oYryAf1785Ky8zh5QFQ==!cJHXaHexQL3azkqqOPze2cv6w1VjslXACZk47M1+eFSPozXQdObT4bWTxcbm6znb",
+            "id": "c48bf96f-3183-4b5b-ad97-d57ce1354992",
+            "name": "v-micricTester",
+            "region": "westus",
+            "subscriptionKey": "wxd8MvYJkCufSEN1We99GQ==!YEP0X79vV1SprSjd5WU93TaVZWx1G/iiuKRfQzmCKUqbXHjDlWlkq0Rj2FrK3wTb",
+            "version": "0.1"
+        },
+        {
+            "type": "blob",
+            "connectionString": "tRqopMbSZy2YgyU1FWcCqg==!f4KEasKUOgufTCI9ft9fcAXK3w+wKF+RPYPWUcrZtav08OEWVWhdXT7qTKM8Ph9Mb/KfBHkEx7P44WCrrQIznO6eXOuCaEQUROLF0x/tUKiTrbk0fmGSYsJZzHUV/dVR+icFXQgzFoWNVO/r5S7GZjB64B5Wu/G6hOnBOuIMQ85ec+uw338f8efAzSTOT4DN3uVavqAC845Y77KQkhMmz1DhnEhgDPidE1U1sbApwbnMUqlUUvgiqwo51PhLWAYP",
+            "container": "testerbot",
+            "name": "v-micricStorage",
+            "resourceGroup": "v-micricMAIN",
+            "serviceName": "vmicrice2v6y",
+            "subscriptionId": "0389857f-2464-451b-ac83-5f54d565b1a7",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "id": "179"
+        }
+    ],
+    "padlock": "f64Jj/FigXs1Rte75m3ZCA==!ZbawJSy396zJLbqo25GeeRc/usg0NjJUckpXL0h2TkXAQ4aPI6TmDnYqSiy4CZtF",
+    "version": "2.0",
+    "path": "C:\\Users\\v-micric\\Documents\\Code\\testerBot\\v-micricTester.bot",
+    "overrides": null
+}

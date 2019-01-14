@@ -11,12 +11,12 @@
             "type": "endpoint",
             "id": "2",
             "name": "production",
-            "url": "https://v-micricmultichanneltester.azurewebsites.net/api/messages"
+            "url": "https://v-micrictester.azurewebsites.net/api/messages"
         },
         {
             "type": "abs",
             "id": "3",
-            "name": "multiChannelTester-abs"
+            "name": "v-micricTester-abs"
         }
     ]
 }

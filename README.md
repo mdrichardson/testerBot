@@ -1,4 +1,4 @@
-# multiChannelTester
+# v-micricTester
 Provides a basic Microsoft Bot Builder bot for testing connectivity through various channels
 
 This bot has been created using [Bot Framework][1].
@@ -29,8 +29,8 @@ node --version
 ## Connect to the bot using Bot Framework Emulator **v4**
 - Launch Bot Framework Emulator
 - File -> Open Bot Configuration
-- Navigate to `multiChannelTester` folder
-- Select `multiChannelTester.bot` file
+- Navigate to `v-micricTester` folder
+- Select `v-micricTester.bot` file
 
 # Deploy the bot to Azure
 This bot was generated using the Empty bot template.  Unmodified, it's not practical to deploy an empty bot to Azure, as it doesn't have any conversational behavior yet.

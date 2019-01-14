@@ -13,13 +13,13 @@ import { UserProfile } from './user/userProfile';
 const DIALOG_STATE_PROPERTY = 'dialogStatePropertyAccessor';
 const USER_PROFILE_PROPERTY = 'userProfilePropertyAccessor';
 
-// this is the LUIS service type entry in the .bot file.
-const LUIS_CONFIGURATION = 'v-micricMultiChannelTester-b557';
+// this is the LUIS NAME entry in the .bot file.
+const LUIS_CONFIGURATION = 'v-micricTester';
 
 // Dialog IDs
 const TESTING_DIALOG_ID = 'testingOptions';
 
-export class MultiChannelBot {
+export class TesterBot {
     private readonly dialogs: DialogSet;
     private dialogState: StatePropertyAccessor<DialogState>;
     private luisRecognizer: LuisRecognizer;
@@ -99,7 +99,8 @@ export class MultiChannelBot {
                 // No interruption
                 // Display any information sent by the user sent through a postback, which is normally hidden, for debugging purposes
                 if (dc.context.activity.type === 'message' && dc.context.activity.channelData.postback) {
-                    dc.context.sendActivity(`You sent this input, which is normally hidden:\n${JSON.stringify(dc.context.activity.value)}`);
+                    const postBackTest = dc.context.activity.value || dc.context.activity.text;
+                    dc.context.sendActivity(`You sent this input, which is normally hidden:\n${JSON.stringify(postBackTest)}`);
                 }
                 // Continue any active dialogs
                 dialogResult = await dc.continueDialog();

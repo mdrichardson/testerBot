@@ -39,14 +39,14 @@ const DEV_ENVIRONMENT = 'development';
 
 // Define name of the endpoint configuration section from the .bot file.
 const BOT_CONFIGURATION = (process.env.NODE_ENV || DEV_ENVIRONMENT);
-const STORAGE_CONFIGURATION_ID = '64'; // blob service's "id" in .bot file
+const STORAGE_CONFIGURATION_ID = '179'; // blob service's "id" in .bot file
 
 // Get bot endpoint configuration by service name.
 // Bot configuration as defined in .bot file.
 const endpointConfig = botConfig.findServiceByNameOrId(BOT_CONFIGURATION) as IEndpointService;
 
 // This bot's main dialog.
-import { MultiChannelBot } from './bot';
+import { TesterBot } from './bot';
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -81,9 +81,9 @@ const conversationState: ConversationState = new ConversationState(blobStorage);
 const userState: UserState = new UserState(blobStorage);
 
 // Create the main dialog.
-let multiChannelBot;
+let testerBot;
 try {
-    multiChannelBot = new MultiChannelBot(conversationState, userState, botConfig);
+    testerBot = new TesterBot(conversationState, userState, botConfig);
 } catch (err) {
     console.error(`[botInitialization Error]: ${err}`);
     process.exit();
@@ -93,6 +93,6 @@ try {
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
         // Route to main dialog.
-        await multiChannelBot.onTurn(context);
+        await testerBot.onTurn(context);
     });
 });

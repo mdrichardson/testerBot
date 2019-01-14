@@ -1,5 +1,5 @@
 {
-    "name": "multiChannelTester",
+    "name": "v-micricTester",
     "version": "1.0.0",
     "description": "Provides a basic Microsoft Bot Builder bot for testing connectivity through various channels",
     "author": "Generated using Microsoft Bot Builder Yeoman generator v4.2.3",
