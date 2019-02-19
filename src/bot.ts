@@ -67,11 +67,11 @@ export class TesterBot {
 
         // Create top-level dialog(s)
         this.dialogs = new DialogSet(this.dialogStateMemory)
-            .add(new TestingDialog(TESTING_DIALOG_ID, this.userProfileAccessorMemory))
+            .add(new TestingDialog(TESTING_DIALOG_ID, this.userProfileAccessorMemory));
         this.dialogs = new DialogSet(this.dialogStateCosmos)
-            .add(new TestingDialog(TESTING_DIALOG_ID, this.userProfileAccessorCosmos))
+            .add(new TestingDialog(TESTING_DIALOG_ID, this.userProfileAccessorCosmos));
         this.dialogs = new DialogSet(this.dialogStateBlob)
-            .add(new TestingDialog(TESTING_DIALOG_ID, this.userProfileAccessorBlob))
+            .add(new TestingDialog(TESTING_DIALOG_ID, this.userProfileAccessorBlob));
 
         this.conversationStateMemory = conversationStateMemory;
         this.userStateMemory = userStateMemory;
