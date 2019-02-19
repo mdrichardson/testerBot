@@ -102,7 +102,7 @@ export class PromptsDialog extends ComponentDialog {
             case choices.confirm:
                 return await step.beginDialog(dialogIds.CONFIRM);
             case choices.attachment:
-                return await step.beginDialog(dialogIds.ATTACHMENT);                
+                return await step.beginDialog(dialogIds.ATTACHMENT);
             case choices.back:
             default:
                 return await step.endDialog();
@@ -185,10 +185,12 @@ export class PromptsDialog extends ComponentDialog {
         const reply =
             `You sent:\n
             --Name: ${attachment.name}\n
+            --Content ${attachment.content}\n
             --Content Type: ${attachment.contentType}\n
-            --URL: ${attachment.contentUrl}`;
+            --Content URL: ${attachment.contentUrl}\n
+            --Thumbnail URL: ${attachment.thumbnailUrl}`;
         await step.context.sendActivity({
-            text: reply,
+            text: 'Attachment:',
             attachments: [attachment],
         });
         console.log(reply);

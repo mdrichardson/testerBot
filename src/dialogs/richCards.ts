@@ -1,5 +1,5 @@
+import { Activity, CardFactory } from 'botbuilder';
 import { ChoicePrompt, ComponentDialog, TextPrompt, WaterfallDialog, WaterfallStepContext } from 'botbuilder-dialogs';
-import { CardFactory, Activity } from 'botbuilder';
 
 import * as adaptiveCard from '../resources/adaptiveCard.json';
 import { cardActions } from '../resources/cardActions';
@@ -55,7 +55,7 @@ export class RichCardsDialog extends ComponentDialog {
     private promptForOptionSelection = async (step: WaterfallStepContext) => {
         // Display prompt
         return await step.prompt(promptIds.CHOICE, {
-            choices: Object.keys(choices).map(key => choices[key]),
+            choices: Object.keys(choices).map((key) => choices[key]),
             prompt: 'What [Rich Card] would you like to test?',
             retryPrompt: 'I didn\'t understand that. Please click an option',
         });
@@ -72,13 +72,13 @@ export class RichCardsDialog extends ComponentDialog {
             case choices.hero:
                 return await this.createHero(step);
             case choices.thumbnail:
-                return await this.createThumbnail(step);               
+                return await this.createThumbnail(step);
             case choices.receipt:
-                return await this.createReceipt(step);               
+                return await this.createReceipt(step);
             case choices.signIn:
-                return await this.createSignIn(step);               
+                return await this.createSignIn(step);
             case choices.video:
-                return await this.createVideo(step);               
+                return await this.createVideo(step);
             case choices.back:
             default:
                 return await step.endDialog();
@@ -88,7 +88,7 @@ export class RichCardsDialog extends ComponentDialog {
     private createAdaptive = async (step: WaterfallStepContext) => {
         const card = CardFactory.adaptiveCard(adaptiveCard);
         return await step.beginDialog(dialogIds.DISPLAY_CARDS, {
-            card: card,
+            card,
             cardName: choices.adaptive,
         });
     }
@@ -97,15 +97,15 @@ export class RichCardsDialog extends ComponentDialog {
         const card = CardFactory.animationCard(
             'Animation Card',
             [
-                {url: 'https://i.gifer.com/Y6X3.gif'}
+                {url: 'https://i.gifer.com/Y6X3.gif'},
             ],
             cardActions,
             {
                 subtitle: 'Test',
-            }
+            },
         );
         return await step.beginDialog(dialogIds.DISPLAY_CARDS, {
-            card: card,
+            card,
             cardName: choices.animation,
         });
     }
@@ -117,10 +117,10 @@ export class RichCardsDialog extends ComponentDialog {
             cardActions,
             {
                 subtitle: 'Test',
-            }
+            },
         );
         return await step.beginDialog(dialogIds.DISPLAY_CARDS, {
-            card: card,
+            card,
             cardName: choices.audio,
         });
     }
@@ -132,10 +132,10 @@ export class RichCardsDialog extends ComponentDialog {
             cardActions,
             {
                 subtitle: 'Test',
-            }
+            },
         );
         return await step.beginDialog(dialogIds.DISPLAY_CARDS, {
-            card: card,
+            card,
             cardName: choices.hero,
         });
     }
@@ -147,10 +147,10 @@ export class RichCardsDialog extends ComponentDialog {
             cardActions,
             {
                 subtitle: 'Test',
-            }
+            },
         );
         return await step.beginDialog(dialogIds.DISPLAY_CARDS, {
-            card: card,
+            card,
             cardName: choices.thumbnail,
         });
     }
@@ -166,7 +166,7 @@ export class RichCardsDialog extends ComponentDialog {
                 {
                     key: 'Fact 2',
                     value: '2',
-                }
+                },
             ],
             items: [
                 {
@@ -207,7 +207,7 @@ export class RichCardsDialog extends ComponentDialog {
             vat: 'vat',
         });
         return await step.beginDialog(dialogIds.DISPLAY_CARDS, {
-            card: card,
+            card,
             cardName: choices.receipt,
         });
     }
@@ -219,7 +219,7 @@ export class RichCardsDialog extends ComponentDialog {
             'Sign In',
         );
         return await step.beginDialog(dialogIds.DISPLAY_CARDS, {
-            card: card,
+            card,
             cardName: choices.signIn,
         });
     }
@@ -232,10 +232,10 @@ export class RichCardsDialog extends ComponentDialog {
             {
                 subtitle: 'subtitle',
                 text: 'text',
-            }
+            },
         );
         return await step.beginDialog(dialogIds.DISPLAY_CARDS, {
-            card: card,
+            card,
             cardName: choices.video,
         });
     }
@@ -245,7 +245,9 @@ export class RichCardsDialog extends ComponentDialog {
     }
 
     private displayCards = async (step: WaterfallStepContext) => {
+        // tslint:disable-next-line:no-string-literal
         const card = step.options['card'];
+        // tslint:disable-next-line:no-string-literal
         const cardName = step.options['cardName'];
         // define single card
         const single: Partial<Activity> = {

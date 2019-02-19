@@ -13,7 +13,7 @@
         {
             "type": "endpoint",
             "appId": "8a4e561c-a361-4d49-83f0-075e2b95d712",
-            "appPassword": "HC/EHYke6sqA8N3ccwDcOg==!hDtsBbr/1fBOMwl2rBoa7EqeCE14uTgSUMqiA25Ovoo=",
+            "appPassword": "KAS3N24KbTyiLchHY8fLXg==!xZzi5hTHvuOugOqOorFQSKR69Hv+H2QQ4W149pc/gd0=",
             "endpoint": "https://vmicrictesterdqt8.azurewebsites.net/api/messages",
             "id": "34",
             "name": "production"
@@ -21,16 +21,16 @@
         {
             "type": "luis",
             "appId": "c48bf96f-3183-4b5b-ad97-d57ce1354992",
-            "authoringKey": "191oYryAf1785Ky8zh5QFQ==!cJHXaHexQL3azkqqOPze2cv6w1VjslXACZk47M1+eFSPozXQdObT4bWTxcbm6znb",
+            "authoringKey": "ClRvACleR/2rYABYEejH+Q==!OeQ6saaTnu9SLY1kniPCX5Hr42zoQMvyff95vQs4aN9p3XGNrQxEQcvkAdUPfk14",
             "id": "c48bf96f-3183-4b5b-ad97-d57ce1354992",
             "name": "v-micricTester",
             "region": "westus",
-            "subscriptionKey": "wxd8MvYJkCufSEN1We99GQ==!YEP0X79vV1SprSjd5WU93TaVZWx1G/iiuKRfQzmCKUqbXHjDlWlkq0Rj2FrK3wTb",
+            "subscriptionKey": "KeQg9bd32bD5KRY4+6xgXg==!8MTTMIuYNWJBR+3p0Y3gB0RwunZUJAfIlDKu+etxm0TeagJ/LUKb6zq/mc4RMuzR",
             "version": "0.1"
         },
         {
             "type": "blob",
-            "connectionString": "tRqopMbSZy2YgyU1FWcCqg==!f4KEasKUOgufTCI9ft9fcAXK3w+wKF+RPYPWUcrZtav08OEWVWhdXT7qTKM8Ph9Mb/KfBHkEx7P44WCrrQIznO6eXOuCaEQUROLF0x/tUKiTrbk0fmGSYsJZzHUV/dVR+icFXQgzFoWNVO/r5S7GZjB64B5Wu/G6hOnBOuIMQ85ec+uw338f8efAzSTOT4DN3uVavqAC845Y77KQkhMmz1DhnEhgDPidE1U1sbApwbnMUqlUUvgiqwo51PhLWAYP",
+            "connectionString": "o/nlWSZNSiK3y15OYlvRYg==!ZxEAUtkepLKv1+4SUjHlayaw3xGt3BeoycJP4QSk5J/tOot5BWV9NuB0omsvJk9wDaBuhzUslu0vEU/NulGUaR+BB7cwJPY1Tu7LmNZXJCoxy8+q7CplJOIIVElzxy+Xk5vlo1QL+FjFBWauI2nOylmo5/GF0HQSWzYBHMuUOgBi3/aI6Z+oBafuvp52H0EiUpMJ8d7slB302unK9H3wGIEGf58lKGaFRFMAMKNm/XQvAo5Rvrp+3XBQP12Do2on",
             "container": "testerbot",
             "name": "v-micricStorage",
             "resourceGroup": "v-micricMAIN",

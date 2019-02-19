@@ -21,11 +21,19 @@ const TESTING_DIALOG_ID = 'testingOptions';
 
 export class TesterBot {
     private readonly dialogs: DialogSet;
-    private dialogState: StatePropertyAccessor<DialogState>;
     private luisRecognizer: LuisRecognizer;
-    private userProfileAccessor: StatePropertyAccessor<UserProfile>;
-    private conversationState: ConversationState;
-    private userState: UserState;
+    private dialogStateMemory: StatePropertyAccessor<DialogState>;
+    private userProfileAccessorMemory: StatePropertyAccessor<UserProfile>;
+    private dialogStateCosmos: StatePropertyAccessor<DialogState>;
+    private userProfileAccessorCosmos: StatePropertyAccessor<UserProfile>;
+    private dialogStateBlob: StatePropertyAccessor<DialogState>;
+    private userProfileAccessorBlob: StatePropertyAccessor<UserProfile>;
+    private conversationStateMemory: ConversationState;
+    private userStateMemory: UserState;
+    private conversationStateCosmos: ConversationState;
+    private userStateCosmos: UserState;
+    private conversationStateBlob: ConversationState;
+    private userStateBlob: UserState;
 
     /**
      * Use onTurn to handle an incoming activity, received from a user, process it, and reply as needed
@@ -33,10 +41,10 @@ export class TesterBot {
      * @param {TurnContext} turnContext context object.
      * @param {BotConfiguration} botConfig contents of the .bot file
      */
-    constructor(conversationState: ConversationState, userState: UserState, botConfig: BotConfiguration) {
-        if (!userState) { throw new Error('Missing parameter.  userState is required'); }
-        if (!botConfig) { throw new Error('Missing parameter.  botConfig is required'); }
-        if (!botConfig) { throw new Error('Missing parameter.  botConfig is required'); }
+    constructor(conversationStateMemory: ConversationState, userStateMemory: UserState,
+                conversationStateCosmos: ConversationState, userStateCosmos: UserState,
+                conversationStateBlob: ConversationState, userStateBlob: UserState,
+                botConfig: BotConfiguration) {
 
         // add the LUIS recognizer
         let luisConfig: LuisService;
@@ -49,16 +57,28 @@ export class TesterBot {
             endpointKey: luisConfig.authoringKey,
         });
 
-        // Create the property accessors for user and conversation state
-        this.userProfileAccessor = userState.createProperty(USER_PROFILE_PROPERTY);
-        this.dialogState = conversationState.createProperty(DIALOG_STATE_PROPERTY);
+        // Create the property accessors for user and conversation state for each storage method
+        this.userProfileAccessorMemory = userStateMemory.createProperty(USER_PROFILE_PROPERTY);
+        this.dialogStateMemory = conversationStateMemory.createProperty(DIALOG_STATE_PROPERTY);
+        this.userProfileAccessorCosmos = userStateCosmos.createProperty(USER_PROFILE_PROPERTY);
+        this.dialogStateCosmos = conversationStateCosmos.createProperty(DIALOG_STATE_PROPERTY);
+        this.userProfileAccessorBlob = userStateBlob.createProperty(USER_PROFILE_PROPERTY);
+        this.dialogStateBlob = conversationStateBlob.createProperty(DIALOG_STATE_PROPERTY);
 
         // Create top-level dialog(s)
-        this.dialogs = new DialogSet(this.dialogState)
-            .add(new TestingDialog(TESTING_DIALOG_ID, this.userProfileAccessor))
+        this.dialogs = new DialogSet(this.dialogStateMemory)
+            .add(new TestingDialog(TESTING_DIALOG_ID, this.userProfileAccessorMemory))
+        this.dialogs = new DialogSet(this.dialogStateCosmos)
+            .add(new TestingDialog(TESTING_DIALOG_ID, this.userProfileAccessorCosmos))
+        this.dialogs = new DialogSet(this.dialogStateBlob)
+            .add(new TestingDialog(TESTING_DIALOG_ID, this.userProfileAccessorBlob))
 
-        this.conversationState = conversationState;
-        this.userState = userState;
+        this.conversationStateMemory = conversationStateMemory;
+        this.userStateMemory = userStateMemory;
+        this.conversationStateCosmos = conversationStateCosmos;
+        this.userStateCosmos = userStateCosmos;
+        this.conversationStateBlob = conversationStateBlob;
+        this.userStateBlob = userStateBlob;
     }
 
     /**
@@ -161,8 +181,12 @@ export class TesterBot {
         }
 
         // make sure to persist state at the end of a turn.
-        await this.conversationState.saveChanges(context);
-        await this.userState.saveChanges(context);
+        await this.conversationStateMemory.saveChanges(context, true);
+        await this.userStateMemory.saveChanges(context, true);
+        await this.conversationStateCosmos.saveChanges(context, true);
+        await this.userStateCosmos.saveChanges(context, true);
+        await this.conversationStateBlob.saveChanges(context, true);
+        await this.userStateBlob.saveChanges(context, true);
     }
 
     /**

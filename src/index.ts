@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { BlobStorage } from 'botbuilder-azure';
+import { BlobStorage, CosmosDbStorage } from 'botbuilder-azure';
 import { config } from 'dotenv';
 import * as path from 'path';
 import * as restify from 'restify';
 
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
-import { BotFrameworkAdapter, ConversationState, UserState } from 'botbuilder';
+import { BotFrameworkAdapter, ConversationState, UserState, MemoryStorage } from 'botbuilder';
 
 // Import required bot configuration.
 import { BlobStorageService, BotConfiguration, IEndpointService } from 'botframework-config';
@@ -39,7 +39,8 @@ const DEV_ENVIRONMENT = 'development';
 
 // Define name of the endpoint configuration section from the .bot file.
 const BOT_CONFIGURATION = (process.env.NODE_ENV || DEV_ENVIRONMENT);
-const STORAGE_CONFIGURATION_ID = '179'; // blob service's "id" in .bot file
+const COSMOS_CONFIGURATION_ID = '10';
+const BLOB_CONFIGURATION_ID = '179'; // blob service's "id" in .bot file
 
 // Get bot endpoint configuration by service name.
 // Bot configuration as defined in .bot file.
@@ -65,25 +66,49 @@ const adapter = new BotFrameworkAdapter({
 // Catch-all for errors.
 adapter.onTurnError = async (context, error) => {
     // This check writes out errors to console log .vs. app insights.
-    console.error(`\n [onTurnError]: ${ error }`);
+    console.error(`\n [onTurnError]: ${ JSON.stringify(error) }`);
     // Send a message to the user
     await context.sendActivity(`Oops. Something went wrong!`);
 };
 
+// For testing purposes, we're going to define 3 sets of storage and integrate them all into the bot
+// Define memory storage
+const memoryStorage = new MemoryStorage();
+
+// Define Cosmos DB storage
+const cosmosSettings = {
+    serviceEndpoint: process.env.cosmosEndpoint,
+    authKey: process.env.cosmosAuth,
+    databaseId: process.env.cosmosDb,
+    collectionId: process.env.cosmosCollection,
+    databaseCreationRequestOptions: null,
+    documentCollectionRequestOptions: null,
+    // partitionKey: '/convo',
+}
+const cosmosStorage = new CosmosDbStorage(cosmosSettings);
+
 // Define blob storage for bot
 // Get service configuration
-const blobStorageConfig = botConfig.findServiceByNameOrId(STORAGE_CONFIGURATION_ID) as BlobStorageService;
+const blobStorageConfig = botConfig.findServiceByNameOrId(BLOB_CONFIGURATION_ID) as BlobStorageService;
 const blobStorage = new BlobStorage({
     containerName: (blobStorageConfig.container),
     storageAccountOrConnectionString: blobStorageConfig.connectionString,
 });
-const conversationState: ConversationState = new ConversationState(blobStorage);
-const userState: UserState = new UserState(blobStorage);
+
+// Create conversationStates and userStates for all storages
+const conversationStateMemory: ConversationState = new ConversationState(memoryStorage);
+const userStateMemory: UserState = new UserState(memoryStorage);
+const conversationStateCosmos: ConversationState = new ConversationState(cosmosStorage);
+const userStateCosmos: UserState = new UserState(cosmosStorage);
+const conversationStateBlob: ConversationState = new ConversationState(blobStorage);
+const userStateBlob: UserState = new UserState(blobStorage);
 
 // Create the main dialog.
 let testerBot;
 try {
-    testerBot = new TesterBot(conversationState, userState, botConfig);
+    testerBot = new TesterBot(conversationStateMemory, userStateMemory,
+        conversationStateCosmos, userStateCosmos,
+        conversationStateBlob, userStateBlob, botConfig);
 } catch (err) {
     console.error(`[botInitialization Error]: ${err}`);
     process.exit();
