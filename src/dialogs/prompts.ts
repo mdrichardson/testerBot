@@ -1,4 +1,4 @@
-import { AttachmentPrompt, ChoicePrompt, ComponentDialog, TextPrompt, WaterfallDialog, WaterfallStepContext, NumberPrompt, DateTimePrompt, ConfirmPrompt } from 'botbuilder-dialogs';
+import { AttachmentPrompt, ChoicePrompt, ComponentDialog, ConfirmPrompt, DateTimePrompt, NumberPrompt, TextPrompt, WaterfallDialog, WaterfallStepContext } from 'botbuilder-dialogs';
 
 const choices = {
     text: 'Text',
@@ -40,7 +40,7 @@ export class PromptsDialog extends ComponentDialog {
             this.promptForOptionSelection.bind(this),
             this.directToTest.bind(this),
         ]));
-        
+
         // Define conversation flow for text test
         this.addDialog(new WaterfallDialog(dialogIds.TEXT, [
             this.startText.bind(this),
@@ -85,7 +85,7 @@ export class PromptsDialog extends ComponentDialog {
 
         // Display prompt
         return await step.prompt(promptIds.CHOICE, {
-            choices: Object.keys(choices).map(key => choices[key]),
+            choices: Object.keys(choices).map((key) => choices[key]),
             prompt: 'What [Prompt] would you like to test?',
             retryPrompt: 'I didn\'t understand that. Please click an option',
         });

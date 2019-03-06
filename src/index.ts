@@ -8,7 +8,7 @@ import * as restify from 'restify';
 
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
-import { BotFrameworkAdapter, ConversationState, UserState, MemoryStorage } from 'botbuilder';
+import { BotFrameworkAdapter, ConversationState, MemoryStorage, UserState } from 'botbuilder';
 
 // Import required bot configuration.
 import { BlobStorageService, BotConfiguration, IEndpointService } from 'botframework-config';
@@ -62,11 +62,10 @@ const adapter = new BotFrameworkAdapter({
     appPassword: endpointConfig.appPassword || process.env.microsoftAppPassword,
 });
 
-
 // Catch-all for errors.
 adapter.onTurnError = async (context, error) => {
     // This check writes out errors to console log .vs. app insights.
-    console.error(`\n [onTurnError]: ${ JSON.stringify(error) }`);
+    console.error(`\n [onTurnError]: ${ error }`);
     // Send a message to the user
     await context.sendActivity(`Oops. Something went wrong!`);
 };
@@ -84,7 +83,7 @@ const cosmosSettings = {
     databaseCreationRequestOptions: null,
     documentCollectionRequestOptions: null,
     // partitionKey: '/convo',
-}
+};
 const cosmosStorage = new CosmosDbStorage(cosmosSettings);
 
 // Define blob storage for bot
@@ -95,20 +94,25 @@ const blobStorage = new BlobStorage({
     storageAccountOrConnectionString: blobStorageConfig.connectionString,
 });
 
-// Create conversationStates and userStates for all storages
-const conversationStateMemory: ConversationState = new ConversationState(memoryStorage);
-const userStateMemory: UserState = new UserState(memoryStorage);
-const conversationStateCosmos: ConversationState = new ConversationState(cosmosStorage);
-const userStateCosmos: UserState = new UserState(cosmosStorage);
-const conversationStateBlob: ConversationState = new ConversationState(blobStorage);
-const userStateBlob: UserState = new UserState(blobStorage);
+// Create conversationStates and userStates for all storages - Change commenting to test
+const myStorage = cosmosStorage;
+// const myStorage = memoryStorage;
+// const myStorage = blobStorage;
+const conversationState: ConversationState = new ConversationState(myStorage);
+const userState: UserState = new UserState(myStorage);
+
+// Cosmos
+// const conversationState: ConversationState = new ConversationState(cosmosStorage);
+// const userState: UserState = new UserState(cosmosStorage);
+
+// Blob
+// const conversationState: ConversationState = new ConversationState(blobStorage);
+// const userState: UserState = new UserState(blobStorage);
 
 // Create the main dialog.
 let testerBot;
 try {
-    testerBot = new TesterBot(conversationStateMemory, userStateMemory,
-        conversationStateCosmos, userStateCosmos,
-        conversationStateBlob, userStateBlob, botConfig);
+    testerBot = new TesterBot(conversationState, userState, botConfig, adapter, myStorage);
 } catch (err) {
     console.error(`[botInitialization Error]: ${err}`);
     process.exit();

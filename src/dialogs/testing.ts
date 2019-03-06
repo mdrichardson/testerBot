@@ -1,7 +1,9 @@
-import { StatePropertyAccessor } from 'botbuilder';
+import { BotAdapter, MemoryStorage, StatePropertyAccessor, TurnContext } from 'botbuilder';
 import { ChoicePrompt, ComponentDialog, WaterfallDialog, WaterfallStepContext } from 'botbuilder-dialogs';
 import { UserProfile } from '../user/userProfile';
 
+import { BlobStorage, CosmosDbStorage } from 'botbuilder-azure';
+import { ProactiveDialog } from './proactive';
 import { PromptsDialog } from './prompts';
 import { RichCardsDialog } from './richCards';
 
@@ -9,12 +11,12 @@ const dialogIds = {
     TESTS_MAIN: 'testsDialog',
     PROMPTS_DIALOG: 'promptsDialog',
     RICH_CARDS_DIALOG: 'richCardsDialog',
+    PROACTIVE_DIALOG: 'proactiveDialog',
 };
 
 const choices = {
     prompts: 'Prompts',
     richCards: 'Rich Cards',
-    dataStorage: 'Data Storage',
     proactive: 'Proactive Messages',
     luis: 'LUIS',
     qnaMaker: 'QnA Maker',
@@ -23,7 +25,11 @@ export class TestingDialog extends ComponentDialog {
 
     private userProfileAccessor: StatePropertyAccessor<UserProfile>;
 
-    constructor(dialogId: string, userProfileAccessor: StatePropertyAccessor<UserProfile>) {
+    constructor(dialogId: string,
+                userProfileAccessor: StatePropertyAccessor<UserProfile>,
+                proactiveStateAccessor: StatePropertyAccessor<any>,
+                adapter: BotAdapter,
+                myStorage: MemoryStorage|CosmosDbStorage|BlobStorage) {
         super(dialogId);
 
         // validate what was passed in
@@ -45,6 +51,7 @@ export class TestingDialog extends ComponentDialog {
         this.addDialog(new ChoicePrompt('choicePrompt'));
         this.addDialog(new PromptsDialog(dialogIds.PROMPTS_DIALOG));
         this.addDialog(new RichCardsDialog(dialogIds.RICH_CARDS_DIALOG));
+        this.addDialog(new ProactiveDialog(dialogIds.PROACTIVE_DIALOG, proactiveStateAccessor, adapter, myStorage));
     }
 
     /**
@@ -66,7 +73,7 @@ export class TestingDialog extends ComponentDialog {
     // Ask the user what they'd like to test and then load the appropriate dialogs for that
     private promptForTesting = async (step: WaterfallStepContext<UserProfile>) => {
         return await step.prompt('choicePrompt', {
-            choices: Object.keys(choices).map(key => choices[key]),
+            choices: Object.keys(choices).map((key) => choices[key]),
             prompt: 'What would you like to test?',
             retryPrompt: 'I didn\'t understand that. Please click an option',
         });
@@ -78,6 +85,8 @@ export class TestingDialog extends ComponentDialog {
                 return await step.beginDialog(dialogIds.PROMPTS_DIALOG);
             case choices.richCards:
                 return await step.beginDialog(dialogIds.RICH_CARDS_DIALOG);
+            case choices.proactive:
+                return await step.beginDialog(dialogIds.PROACTIVE_DIALOG, { reference: step.options.reference });
             default:
                 return await step.endDialog();
         }

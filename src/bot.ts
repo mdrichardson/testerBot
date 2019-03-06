@@ -1,11 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { ActivityTypes, ConversationState, RecognizerResult, StatePropertyAccessor, TurnContext, UserState } from 'botbuilder';
+import { ActivityTypes, BotAdapter, ConversationState, MemoryStorage, RecognizerResult, StatePropertyAccessor, TurnContext, UserState } from 'botbuilder';
 import { LuisRecognizer } from 'botbuilder-ai';
 import { DialogContext, DialogSet, DialogState, DialogTurnResult, DialogTurnStatus } from 'botbuilder-dialogs';
-import { BotConfiguration, LuisService } from 'botframework-config';
+import { BotConfiguration, CosmosDbService, LuisService } from 'botframework-config';
 
+import { BlobStorage, CosmosDbStorage } from 'botbuilder-azure';
 import { TestingDialog } from './dialogs/testing';
 import { UserProfile } from './user/userProfile';
 
@@ -19,21 +20,17 @@ const LUIS_CONFIGURATION = 'v-micricTester';
 // Dialog IDs
 const TESTING_DIALOG_ID = 'testingOptions';
 
+// Proactive ID List Property
+const ID_LIST = 'proactiveIdList';
+
 export class TesterBot {
     private readonly dialogs: DialogSet;
     private luisRecognizer: LuisRecognizer;
-    private dialogStateMemory: StatePropertyAccessor<DialogState>;
-    private userProfileAccessorMemory: StatePropertyAccessor<UserProfile>;
-    private dialogStateCosmos: StatePropertyAccessor<DialogState>;
-    private userProfileAccessorCosmos: StatePropertyAccessor<UserProfile>;
-    private dialogStateBlob: StatePropertyAccessor<DialogState>;
-    private userProfileAccessorBlob: StatePropertyAccessor<UserProfile>;
-    private conversationStateMemory: ConversationState;
-    private userStateMemory: UserState;
-    private conversationStateCosmos: ConversationState;
-    private userStateCosmos: UserState;
-    private conversationStateBlob: ConversationState;
-    private userStateBlob: UserState;
+    private dialogState: StatePropertyAccessor<DialogState>;
+    private userProfileAccessor: StatePropertyAccessor<UserProfile>;
+    private proactiveStateAccessor: StatePropertyAccessor<any>;
+    private conversationState: ConversationState;
+    private userState: UserState;
 
     /**
      * Use onTurn to handle an incoming activity, received from a user, process it, and reply as needed
@@ -41,10 +38,7 @@ export class TesterBot {
      * @param {TurnContext} turnContext context object.
      * @param {BotConfiguration} botConfig contents of the .bot file
      */
-    constructor(conversationStateMemory: ConversationState, userStateMemory: UserState,
-                conversationStateCosmos: ConversationState, userStateCosmos: UserState,
-                conversationStateBlob: ConversationState, userStateBlob: UserState,
-                botConfig: BotConfiguration) {
+    constructor(conversationState: ConversationState, userState: UserState, botConfig: BotConfiguration, adapter: BotAdapter, myStorage: MemoryStorage|CosmosDbStorage|BlobStorage) {
 
         // add the LUIS recognizer
         let luisConfig: LuisService;
@@ -58,27 +52,15 @@ export class TesterBot {
         });
 
         // Create the property accessors for user and conversation state for each storage method
-        this.userProfileAccessorMemory = userStateMemory.createProperty(USER_PROFILE_PROPERTY);
-        this.dialogStateMemory = conversationStateMemory.createProperty(DIALOG_STATE_PROPERTY);
-        this.userProfileAccessorCosmos = userStateCosmos.createProperty(USER_PROFILE_PROPERTY);
-        this.dialogStateCosmos = conversationStateCosmos.createProperty(DIALOG_STATE_PROPERTY);
-        this.userProfileAccessorBlob = userStateBlob.createProperty(USER_PROFILE_PROPERTY);
-        this.dialogStateBlob = conversationStateBlob.createProperty(DIALOG_STATE_PROPERTY);
+        this.userProfileAccessor = userState.createProperty(USER_PROFILE_PROPERTY);
+        this.dialogState = conversationState.createProperty(DIALOG_STATE_PROPERTY);
 
         // Create top-level dialog(s)
-        this.dialogs = new DialogSet(this.dialogStateMemory)
-            .add(new TestingDialog(TESTING_DIALOG_ID, this.userProfileAccessorMemory));
-        this.dialogs = new DialogSet(this.dialogStateCosmos)
-            .add(new TestingDialog(TESTING_DIALOG_ID, this.userProfileAccessorCosmos));
-        this.dialogs = new DialogSet(this.dialogStateBlob)
-            .add(new TestingDialog(TESTING_DIALOG_ID, this.userProfileAccessorBlob));
+        this.dialogs = new DialogSet(this.dialogState)
+            .add(new TestingDialog(TESTING_DIALOG_ID, this.userProfileAccessor, this.proactiveStateAccessor, adapter, myStorage));
 
-        this.conversationStateMemory = conversationStateMemory;
-        this.userStateMemory = userStateMemory;
-        this.conversationStateCosmos = conversationStateCosmos;
-        this.userStateCosmos = userStateCosmos;
-        this.conversationStateBlob = conversationStateBlob;
-        this.userStateBlob = userStateBlob;
+        this.conversationState = conversationState;
+        this.userState = userState;
     }
 
     /**
@@ -127,7 +109,7 @@ export class TesterBot {
             }
 
             // If no active dialog or no active dialog has responded
-            if (!dc.context.responded) {
+            if (!dc.context.responded && dialogResult.status) {
                 // Switch on return results from an active dialog
                 switch (dialogResult.status) {
                     // no active dialogs
@@ -174,19 +156,16 @@ export class TesterBot {
                             Locale: ${context.activity.locale},
                         `;
                         await context.sendActivity(`Welcome. Here\'s what I know about you:\n${userInfo}`);
-                        await dc.beginDialog(TESTING_DIALOG_ID);
+                        const reference = TurnContext.getConversationReference(context.activity);
+                        await dc.beginDialog(TESTING_DIALOG_ID, { reference });
                     }
                 }
             }
         }
 
         // make sure to persist state at the end of a turn.
-        await this.conversationStateMemory.saveChanges(context, true);
-        await this.userStateMemory.saveChanges(context, true);
-        await this.conversationStateCosmos.saveChanges(context, true);
-        await this.userStateCosmos.saveChanges(context, true);
-        await this.conversationStateBlob.saveChanges(context, true);
-        await this.userStateBlob.saveChanges(context, true);
+        await this.conversationState.saveChanges(context, true);
+        await this.userState.saveChanges(context, true);
     }
 
     /**
