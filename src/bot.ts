@@ -9,6 +9,7 @@ import { BotConfiguration, CosmosDbService, LuisService } from 'botframework-con
 import { BlobStorage, CosmosDbStorage } from 'botbuilder-azure';
 import { TestingDialog } from './dialogs/testing';
 import { UserProfile } from './user/userProfile';
+import { LuisDialog } from './dialogs/luis';
 
 // State Accessor Properties
 const DIALOG_STATE_PROPERTY = 'dialogStatePropertyAccessor';
@@ -58,7 +59,8 @@ export class TesterBot {
 
         // Create top-level dialog(s)
         this.dialogs = new DialogSet(this.dialogState)
-            .add(new TestingDialog(TESTING_DIALOG_ID, this.userProfileAccessor, this.proactiveStateAccessor, adapter, myStorage));
+            .add(new TestingDialog(TESTING_DIALOG_ID, this.userProfileAccessor, this.proactiveStateAccessor, adapter, myStorage))
+            .add(new LuisDialog('luisDialog'));
 
         this.conversationState = conversationState;
         this.userState = userState;
@@ -116,7 +118,11 @@ export class TesterBot {
                     dc.context.sendActivity(`You sent this input, which is normally hidden:\n${JSON.stringify(postBackData)}`);
                 }
                 // Continue any active dialogs
-                dialogResult = await dc.continueDialog();
+                if (topIntent === 'beerPreference' && luisResults.intents.beerPreference.score >= 0.75) {
+                    await dc.replaceDialog('luisDialog', luisResults);
+                } else {
+                    dialogResult = await dc.continueDialog();
+                }
             }
 
             // If no active dialog or no active dialog has responded
@@ -168,7 +174,7 @@ export class TesterBot {
                         `;
                         await context.sendActivity(`Welcome. Here\'s what I know about you:\n${userInfo}`);
                         const reference = TurnContext.getConversationReference(context.activity);
-                        await dc.beginDialog(TESTING_DIALOG_ID, { reference, proactiveId: this.proactiveId });
+                        await dc.replaceDialog(TESTING_DIALOG_ID, { reference, proactiveId: this.proactiveId });
                     }
                 }
             }

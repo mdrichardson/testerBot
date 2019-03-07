@@ -1,4 +1,4 @@
-import { BotAdapter, MemoryStorage, StatePropertyAccessor, TurnContext } from 'botbuilder';
+import { BotAdapter, MemoryStorage, TurnContext } from 'botbuilder';
 import { BlobStorage, CosmosDbStorage } from 'botbuilder-azure';
 import { ChoicePrompt, ComponentDialog, TextPrompt, WaterfallDialog, WaterfallStepContext } from 'botbuilder-dialogs';
 
@@ -23,7 +23,7 @@ export class ProactiveDialog extends ComponentDialog {
     private myStorage: MemoryStorage|CosmosDbStorage|BlobStorage;
     private PROACTIVE_STORAGE_ID: string;
 
-    constructor(dialogId: string, proactiveStateAccessor: StatePropertyAccessor<any>, adapter: BotAdapter, myStorage: MemoryStorage|CosmosDbStorage|BlobStorage) {
+    constructor(dialogId: string, adapter: BotAdapter, myStorage: MemoryStorage|CosmosDbStorage|BlobStorage) {
         super(dialogId);
 
         // validate what was passed in

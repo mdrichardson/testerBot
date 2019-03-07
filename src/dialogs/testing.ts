@@ -3,6 +3,7 @@ import { ChoicePrompt, ComponentDialog, WaterfallDialog, WaterfallStepContext } 
 import { UserProfile } from '../user/userProfile';
 
 import { BlobStorage, CosmosDbStorage } from 'botbuilder-azure';
+import { LuisDialog } from './luis';
 import { ProactiveDialog } from './proactive';
 import { PromptsDialog } from './prompts';
 import { RichCardsDialog } from './richCards';
@@ -12,6 +13,7 @@ const dialogIds = {
     PROMPTS_DIALOG: 'promptsDialog',
     RICH_CARDS_DIALOG: 'richCardsDialog',
     PROACTIVE_DIALOG: 'proactiveDialog',
+    LUIS_DIALOG: 'luisDialog',
 };
 
 const choices = {
@@ -51,7 +53,8 @@ export class TestingDialog extends ComponentDialog {
         this.addDialog(new ChoicePrompt('choicePrompt'));
         this.addDialog(new PromptsDialog(dialogIds.PROMPTS_DIALOG));
         this.addDialog(new RichCardsDialog(dialogIds.RICH_CARDS_DIALOG));
-        this.addDialog(new ProactiveDialog(dialogIds.PROACTIVE_DIALOG, proactiveStateAccessor, adapter, myStorage));
+        this.addDialog(new ProactiveDialog(dialogIds.PROACTIVE_DIALOG, adapter, myStorage));
+        this.addDialog(new LuisDialog(dialogIds.LUIS_DIALOG));
     }
 
     /**
@@ -87,6 +90,8 @@ export class TestingDialog extends ComponentDialog {
                 return await step.replaceDialog(dialogIds.RICH_CARDS_DIALOG);
             case choices.proactive:
                 return await step.replaceDialog(dialogIds.PROACTIVE_DIALOG, step.options);
+            case choices.luis:
+                return await step.replaceDialog(dialogIds.LUIS_DIALOG, step.options);
             default:
                 return await step.endDialog();
         }
