@@ -31,6 +31,7 @@ export class TesterBot {
     private proactiveStateAccessor: StatePropertyAccessor<any>;
     private conversationState: ConversationState;
     private userState: UserState;
+    private proactiveId: string;
 
     /**
      * Use onTurn to handle an incoming activity, received from a user, process it, and reply as needed
@@ -61,6 +62,16 @@ export class TesterBot {
 
         this.conversationState = conversationState;
         this.userState = userState;
+
+        // Generate random string
+        let id = '';
+        let randomAscii;
+        for (let i = 0; i < 5; i++) {
+            randomAscii = Math.floor((Math.random() * 25) + 97);
+            id += String.fromCharCode(randomAscii);
+        }
+
+        this.proactiveId = id;
     }
 
     /**
@@ -157,7 +168,7 @@ export class TesterBot {
                         `;
                         await context.sendActivity(`Welcome. Here\'s what I know about you:\n${userInfo}`);
                         const reference = TurnContext.getConversationReference(context.activity);
-                        await dc.beginDialog(TESTING_DIALOG_ID, { reference });
+                        await dc.beginDialog(TESTING_DIALOG_ID, { reference, proactiveId: this.proactiveId });
                     }
                 }
             }
@@ -185,7 +196,7 @@ export class TesterBot {
                 if (dc.activeDialog) {
                     // cancel all active dialog (clean the stack)
                     await dc.cancelAllDialogs();
-                    await dc.context.sendActivity(`Ok.  I've cancelled our last activity.`);
+                    await dc.context.sendActivity(`Ok. I've cancelled our last activity.`);
                 } else {
                     await dc.context.sendActivity(`I don't have anything to cancel.`);
                 }

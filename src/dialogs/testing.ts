@@ -82,17 +82,19 @@ export class TestingDialog extends ComponentDialog {
     private createAppropriateWaterfall = async (step: WaterfallStepContext<UserProfile>) => {
         switch (step.result.value) {
             case choices.prompts:
-                return await step.beginDialog(dialogIds.PROMPTS_DIALOG);
+                return await step.replaceDialog(dialogIds.PROMPTS_DIALOG);
             case choices.richCards:
-                return await step.beginDialog(dialogIds.RICH_CARDS_DIALOG);
+                return await step.replaceDialog(dialogIds.RICH_CARDS_DIALOG);
             case choices.proactive:
-                return await step.beginDialog(dialogIds.PROACTIVE_DIALOG, { reference: step.options.reference });
+                return await step.replaceDialog(dialogIds.PROACTIVE_DIALOG, step.options);
             default:
                 return await step.endDialog();
         }
     }
 
     private restart = async (step: WaterfallStepContext) => {
-        return await step.beginDialog(dialogIds.TESTS_MAIN);
+        // tslint:disable-next-line:no-string-literal
+        const reference = step.options['reference'];
+        return await step.replaceDialog(dialogIds.TESTS_MAIN, { reference });
     }
 }

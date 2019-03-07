@@ -18,11 +18,10 @@ const promptIds = {
     TEXT: 'textPrompt',
 };
 
-const PROACTIVE_STORAGE_ID = 'proactiveIdList';
-
 export class ProactiveDialog extends ComponentDialog {
     public adapter: BotAdapter;
     private myStorage: MemoryStorage|CosmosDbStorage|BlobStorage;
+    private PROACTIVE_STORAGE_ID: string;
 
     constructor(dialogId: string, proactiveStateAccessor: StatePropertyAccessor<any>, adapter: BotAdapter, myStorage: MemoryStorage|CosmosDbStorage|BlobStorage) {
         super(dialogId);
@@ -54,6 +53,8 @@ export class ProactiveDialog extends ComponentDialog {
 
     // Ask the user what they'd like to test and then load the appropriate dialogs for that
     private promptForOptionSelection = async (step: WaterfallStepContext) => {
+        // tslint:disable-next-line:no-string-literal
+        this.PROACTIVE_STORAGE_ID = 'proactiveIdList-' + step.options['proactiveId'];
         // Display prompt
         return await step.prompt(promptIds.CHOICE, {
             choices: Object.keys(choices).map((key) => choices[key]),
@@ -65,14 +66,17 @@ export class ProactiveDialog extends ComponentDialog {
     private executeAppropriateAction = async (step: WaterfallStepContext) => {
         switch (step.result.value) {
             case choices.START:
-                return await this.startProactive(step);
+                await this.startProactive(step);
+                break;
             case choices.CHECK:
-                return await this.checkProactive(step);
+                await this.checkProactive(step);
+                break;
             case choices.CLOSE:
                 return await step.replaceDialog(dialogIds.PROACTIVE_GET_ID);
             default:
                 return await step.endDialog();
         }
+        return await step.replaceDialog(dialogIds.PROACTIVE_MAIN, step.options);
     }
 
     private startProactive = async (step: WaterfallStepContext) => {
@@ -84,7 +88,11 @@ export class ProactiveDialog extends ComponentDialog {
             id += String.fromCharCode(randomAscii);
         }
 
-        const idsList = await this.myStorage.read[PROACTIVE_STORAGE_ID] || {};
+        let storage = await this.myStorage.read([this.PROACTIVE_STORAGE_ID]);
+        if (Object.keys(storage).length === 0) {
+            storage = { [this.PROACTIVE_STORAGE_ID]: { list: {} }};
+        }
+        const idsList = storage[this.PROACTIVE_STORAGE_ID].list;
         await step.context.sendActivity(`Creating ID #: ${id}`);
         // tslint:disable-next-line:no-string-literal
         const reference = step.options['reference'];
@@ -95,24 +103,24 @@ export class ProactiveDialog extends ComponentDialog {
                 list: idsList,
                 eTag: '*',
             };
-            changes[PROACTIVE_STORAGE_ID] = toSave;
+            changes[this.PROACTIVE_STORAGE_ID] = toSave;
             await this.myStorage.write(changes);
-            return await step.context.sendActivity(`Successfully wrote ID: ${id} to storage`);
+            await step.context.sendActivity(`Successfully wrote ID: ${id} to storage`);
         } catch (err) {
-            return await step.context.sendActivity(`Failed to save id to storage`);
+            await step.context.sendActivity(`Failed to save id to storage`);
         }
     }
 
     private checkProactive = async (step: WaterfallStepContext) => {
         // tslint:disable-next-line:no-string-literal
-        const storage = await this.myStorage.read([PROACTIVE_STORAGE_ID]);
-        const ids = storage[PROACTIVE_STORAGE_ID].list;
-        if (Object.keys(ids).length) {
+        const storage = await this.myStorage.read([this.PROACTIVE_STORAGE_ID]);
+        const idsList = storage[this.PROACTIVE_STORAGE_ID].list;
+        if (Object.keys(idsList).length > 0) {
             return await step.context.sendActivity(
                 `| ID &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Reference &nbsp;&nbsp; | Completed | \n` +
                 `| :--- | :---: | :---: | \n` +
-                Object.keys(ids).map((id) => {
-                    return `${id} &nbsp; | ${ids[id].reference.conversation.id.split('|')[0]} &nbsp; | ${ids[id].completed}`;
+                Object.keys(idsList).map((id) => {
+                    return `${id} &nbsp; | ${idsList[id].reference.conversation.id.split('|')[0]} &nbsp; | ${idsList[id].completed}`;
                 }).join('\n'));
         } else {
             await step.context.sendActivity(`There are no active ids in storage`);
@@ -120,15 +128,23 @@ export class ProactiveDialog extends ComponentDialog {
     }
 
     private getId = async (step: WaterfallStepContext) => {
-        return await step.prompt(promptIds.TEXT, `Enter the proactive ID to close`);
+        const storage = await this.myStorage.read([this.PROACTIVE_STORAGE_ID]);
+        const idsList = storage[this.PROACTIVE_STORAGE_ID].list;
+
+        return await step.prompt(promptIds.CHOICE, {
+            choices: Object.keys(idsList),
+            prompt: 'What Job Id would you like to close?',
+            retryPrompt: 'I didn\'t understand that. Please click an option',
+        });
     }
 
     private close = async (step: WaterfallStepContext) => {
-        const id = step.result;
-        const storage = await this.myStorage.read([PROACTIVE_STORAGE_ID]);
-        const idsList = storage[PROACTIVE_STORAGE_ID].list;
+        const id = step.result.value;
 
-        const idInfo = idsList[id] || undefined;
+        const storage = await this.myStorage.read([this.PROACTIVE_STORAGE_ID]);
+        const idsList = storage[this.PROACTIVE_STORAGE_ID].list;
+
+        const idInfo = idsList[id] || null;
 
         if (!idInfo) {
             await step.context.sendActivity(`Sorry. Nothing in storage with ID: ${id}. Try again.`);
@@ -144,7 +160,7 @@ export class ProactiveDialog extends ComponentDialog {
                         list: idsList,
                         eTag: '*',
                     };
-                    changes[PROACTIVE_STORAGE_ID] = toSave;
+                    changes[this.PROACTIVE_STORAGE_ID] = toSave;
                     await this.myStorage.write(changes);
                     await proactiveTurnContext.sendActivity(`Job completed: ${id}`);
                 });
@@ -154,10 +170,9 @@ export class ProactiveDialog extends ComponentDialog {
                 await step.context.sendActivity(`This id is already completed. Please create a new one.`);
             }
         }
-        return await step.next();
     }
 
     private end = async (step: WaterfallStepContext) => {
-        return await step.beginDialog(dialogIds.PROACTIVE_MAIN);
+        return await step.replaceDialog(dialogIds.PROACTIVE_MAIN, step.options);
     }
 }
