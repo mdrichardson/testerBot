@@ -1,12 +1,20 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { ActivityTypes, BotAdapter, ConversationState, MemoryStorage, RecognizerResult, StatePropertyAccessor, TurnContext, UserState } from 'botbuilder';
+import {
+    ActivityTypes,
+    BotAdapter,
+    ConversationState,
+    MemoryStorage,
+    RecognizerResult,
+    StatePropertyAccessor,
+    TurnContext,
+    UserState } from 'botbuilder';
 import { LuisRecognizer } from 'botbuilder-ai';
-import { DialogContext, DialogSet, DialogState, DialogTurnResult, DialogTurnStatus } from 'botbuilder-dialogs';
-import { BotConfiguration, CosmosDbService, LuisService } from 'botframework-config';
-
 import { BlobStorage, CosmosDbStorage } from 'botbuilder-azure';
+import { DialogContext, DialogSet, DialogState, DialogTurnResult, DialogTurnStatus } from 'botbuilder-dialogs';
+import { BotConfiguration, LuisService } from 'botframework-config';
+
 import { LuisDialog } from './dialogs/luis';
 import { TestingDialog } from './dialogs/testing';
 
@@ -32,13 +40,12 @@ export class TesterBot {
     private userState: UserState;
     private proactiveId: string;
 
-    /**
-     * Use onTurn to handle an incoming activity, received from a user, process it, and reply as needed
-     *
-     * @param {TurnContext} turnContext context object.
-     * @param {BotConfiguration} botConfig contents of the .bot file
-     */
-    constructor(conversationState: ConversationState, userState: UserState, botConfig: BotConfiguration, adapter: BotAdapter, myStorage: MemoryStorage|CosmosDbStorage|BlobStorage) {
+    constructor(
+        conversationState: ConversationState,
+        userState: UserState,
+        botConfig: BotConfiguration,
+        adapter: BotAdapter,
+        myStorage: MemoryStorage|CosmosDbStorage|BlobStorage) {
 
         // add the LUIS recognizer
         let luisConfig: LuisService;
@@ -46,7 +53,6 @@ export class TesterBot {
         if (!luisConfig || !luisConfig.appId) { throw new Error('Missing LUIS config. Please add to .bot file.'); }
         this.luisRecognizer = new LuisRecognizer({
             applicationId: luisConfig.appId,
-            // CAUTION: Its better to assign and use a subscription key instead of authoring key here.
             endpoint: luisConfig.getEndpoint(),
             endpointKey: luisConfig.subscriptionKey,
         });
@@ -62,7 +68,7 @@ export class TesterBot {
         this.conversationState = conversationState;
         this.userState = userState;
 
-        // Generate random string
+        // Generate random string for proactive storage ID
         let id = '';
         let randomAscii;
         for (let i = 0; i < 5; i++) {
@@ -73,18 +79,7 @@ export class TesterBot {
         this.proactiveId = id;
     }
 
-    /**
-     * This is the main code that drives the bot. It does the following:
-     * 1. Display a welcome message with information about the user
-     * 2. Use LUIS to recognize intents for incoming user message
-     * 3. Asks user what they'd like to test and displays appropriate converation paths
-     */
     public onTurn = async (context: TurnContext) => {
-        // Handle Message activity type, which is the main activity type for shown within a conversational interface
-        // Message activities may contain text, speech, interactive cards, and binary or unknown attachments.
-        // see https://aka.ms/about-bot-activity-message to learn more about the message and other activity types
-
-        // Create a dialog context
         const dc = await this.dialogs.createContext(context);
 
         if (context.activity.type === ActivityTypes.Message) {
@@ -113,7 +108,7 @@ export class TesterBot {
                     const postBackData = dc.context.activity.value || dc.context.activity.text;
                     dc.context.sendActivity(`You sent this input, which is normally hidden:\n${JSON.stringify(postBackData)}`);
                 }
-                // Continue any active dialogs
+                // Continue any active dialogs, checking first if we need to send results to LUIS dialog test
                 if (topIntent === 'beerPreference' && luisResults.intents.beerPreference.score >= 0.75) {
                     await dc.replaceDialog('luisDialog', luisResults);
                 } else {
@@ -128,7 +123,6 @@ export class TesterBot {
                     // no active dialogs
                     case DialogTurnStatus.empty:
                         // Determine what to do with LUIS intents
-                        // TODO: Add LUIS Intents
                         switch (topIntent) {
                             default:
                                 // Let the user know we didn't recognize their intent
@@ -136,12 +130,8 @@ export class TesterBot {
                                 break;
                         }
                         break;
-                        case DialogTurnStatus.waiting:
-                        // The active dialog is waiting for a response from the user, so do nothing.
-                        break;
+                    case DialogTurnStatus.waiting:
                     case DialogTurnStatus.complete:
-                        // All child dialogs have ended. so do nothing.
-                        break;
                     default:
                         // Unrecognized status from child dialog. Cancel all dialogs.
                         await dc.cancelAllDialogs();
@@ -149,50 +139,36 @@ export class TesterBot {
                 }
             }
         } else if (context.activity.type === ActivityTypes.ConversationUpdate) {
-            // Handle ConversationUpdate activity type, which is used to indicates new members add to
-            // the conversation.
-            // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types
             // Do we have any new members added to the conversation?
             if (context.activity.membersAdded.length !== 0) {
                 // Iterate over all new members added to the conversation
                 for (const idx in context.activity.membersAdded) {
                     // Greet anyone that was not the target (recipient) of this message
-                    // the 'bot' is the recipient for events from the channel,
-                    // context.activity.membersAdded == context.activity.recipient.Id indicates the
-                    // bot was added to the conversation.
                     if (context.activity.membersAdded[idx].id !== context.activity.recipient.id) {
                         // Welcome the user with information about themself
-                        const userInfo = `
-                            Username: ${context.activity.membersAdded[0].name},
-                            ID: ${context.activity.membersAdded[0].id},
-                            Channel: ${context.activity.channelId},
-                            Locale: ${context.activity.locale},
-                        `;
+                        const userInfo = `` +
+                            `**Username:** ${context.activity.membersAdded[0].name},\n` +
+                            `**ID:** ${context.activity.membersAdded[0].id},\n` +
+                            `**Channel:** ${context.activity.channelId},\n` +
+                            `**Locale:** ${context.activity.locale},\n`;
                         await context.sendActivity(`Welcome. Here\'s what I know about you:\n${userInfo}`);
                         const reference = TurnContext.getConversationReference(context.activity);
-                        await dc.replaceDialog(TESTING_DIALOG_ID, { reference, proactiveId: this.proactiveId });
+                        await dc.replaceDialog(TESTING_DIALOG_ID, { proactiveId: this.proactiveId, reference });
                     }
                 }
             }
         }
 
         // make sure to persist state at the end of a turn.
-        await this.conversationState.saveChanges(context, true);
-        await this.userState.saveChanges(context, true);
+        await this.conversationState.saveChanges(context);
+        await this.userState.saveChanges(context);
     }
 
-    /**
-     * Look at the LUIS results and determine if we need to handle
-     * an interruptions due to a Help or Cancel intent
-     *
-     * @param {dc} dc - dialog context
-     * @param {LuisResults} luisResults - LUIS recognizer results
-     */
+    // Check if LUIS needs to interrupt current dialog
     private isTurnInterrupted = async (dc: DialogContext, luisResults: RecognizerResult) => {
         const topIntent = LuisRecognizer.topIntent(luisResults);
 
         // see if there are any conversation interrupts we need to handle
-        // TODO: Add LUIS interrupts
         switch (topIntent) {
             case LUIS_INTENTS.CANCEL:
                 await dc.context.sendActivity(`CANCEL INTERRUPTION.\nCancelling active dialogs...`);
@@ -201,7 +177,7 @@ export class TesterBot {
                 await dc.context.sendActivity(`HELP INTERRUPTION.\n**Click on one of the buttons, dummy.**`);
                 return true;
             default:
-                return false; // is not interrupt
+                return false; // is not interrupted
         }
     }
 }
