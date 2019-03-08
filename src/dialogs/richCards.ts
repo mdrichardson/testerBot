@@ -58,13 +58,8 @@ export class RichCardsDialog extends ComponentDialog {
 
     // Ask the user what they'd like to test and then load the appropriate dialogs for that
     private promptForOptionSelection = async (step: WaterfallStepContext) => {
-        utilities.consolePrint('Rich Card Choices');
         // Display prompt
-        return await step.prompt(promptIds.CHOICE, {
-            choices: Object.keys(choices).map((key) => choices[key]),
-            prompt: 'What **[Rich Card]** would you like to test?',
-            retryPrompt: 'I didn\'t understand that. Please click an option',
-        });
+        return await step.prompt(promptIds.CHOICE, utilities.getTestChoiceParams(choices, 'Rich Card'));
     }
 
     private displayAppropriateCard = async (step: WaterfallStepContext) => {

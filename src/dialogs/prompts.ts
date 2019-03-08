@@ -1,4 +1,14 @@
-import { AttachmentPrompt, ChoicePrompt, ComponentDialog, ConfirmPrompt, DateTimePrompt, NumberPrompt, TextPrompt, WaterfallDialog, WaterfallStepContext } from 'botbuilder-dialogs';
+import {
+    AttachmentPrompt,
+    ChoicePrompt,
+    ComponentDialog,
+    ConfirmPrompt,
+    DateTimePrompt,
+    NumberPrompt,
+    TextPrompt,
+    WaterfallDialog,
+    WaterfallStepContext } from 'botbuilder-dialogs';
+import utilities from '../resources/utilities';
 
 const choices = {
     text: 'Text',
@@ -82,13 +92,9 @@ export class PromptsDialog extends ComponentDialog {
 
     // Ask the user what they'd like to test and then load the appropriate dialogs for that
     private promptForOptionSelection = async (step: WaterfallStepContext) => {
-
+        utilities.consolePrint('Prompt Choices');
         // Display prompt
-        return await step.prompt(promptIds.CHOICE, {
-            choices: Object.keys(choices).map((key) => choices[key]),
-            prompt: 'What [Prompt] would you like to test?',
-            retryPrompt: 'I didn\'t understand that. Please click an option',
-        });
+        return await step.prompt(promptIds.CHOICE, utilities.getTestChoiceParams(choices, 'Prompt'));
     }
 
     private directToTest = async (step: WaterfallStepContext) => {
