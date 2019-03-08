@@ -58,7 +58,6 @@ export class RichCardsDialog extends ComponentDialog {
 
     // Ask the user what they'd like to test and then load the appropriate dialogs for that
     private promptForOptionSelection = async (step: WaterfallStepContext) => {
-        // Display prompt
         return await step.prompt(promptIds.CHOICE, utilities.getTestChoiceParams(choices, 'Rich Card'));
     }
 
@@ -266,12 +265,13 @@ export class RichCardsDialog extends ComponentDialog {
             attachments: [card, card, card],
             attachmentLayout: 'carousel',
         };
-        utilities.consolePrint(cardName);
+        utilities.beginTestPrint(cardName);
         // send all cards
         return await step.context.sendActivities([single, list, carousel]);
     }
 
     private end = async (step: WaterfallStepContext) => {
+        utilities.endTestPrint('Rich Card');
         return await step.beginDialog('testingOptions');
     }
 }

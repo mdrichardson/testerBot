@@ -1,11 +1,14 @@
 const chalk = require('chalk');
 
 export default {
-    consolePrint(testName: string): void {
-        console.log(`\nConducting [` + chalk.blue(testName) + `] Test\n`);
+    beginTestPrint(testName: string): void {
+        console.log(`\nConducting [` + chalk.green(testName) + `] Test\n`);
     },
-    getTestChoiceParams(choices, testName: string): object {
-        this.consolePrint(testName);
+    endTestPrint(testName: string): void {
+        console.log(`\nConducting [` + chalk.red(testName) + `] Test\n`);
+    },
+    getTestChoiceParams(choices: any, testName: string): object {
+        this.beginTestPrint(testName);
         return {
             choices: Object.keys(choices).map((key) => choices[key]),
             prompt: `What **[${testName}]** would you like to test?`,

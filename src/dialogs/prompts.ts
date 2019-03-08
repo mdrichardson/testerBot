@@ -49,36 +49,42 @@ export class PromptsDialog extends ComponentDialog {
         this.addDialog(new WaterfallDialog(dialogIds.PROMPTS_MAIN, [
             this.promptForOptionSelection.bind(this),
             this.directToTest.bind(this),
+            this.end.bind(this),
         ]));
 
         // Define conversation flow for text test
         this.addDialog(new WaterfallDialog(dialogIds.TEXT, [
             this.startText.bind(this),
             this.endText.bind(this),
+            this.end.bind(this),
         ]));
 
         // Define conversation flow for number test
         this.addDialog(new WaterfallDialog(dialogIds.NUMBER, [
             this.startNumber.bind(this),
             this.endNumber.bind(this),
+            this.end.bind(this),
         ]));
 
         // Define conversation flow for dateTime test
         this.addDialog(new WaterfallDialog(dialogIds.DATETIME, [
             this.startDateTime.bind(this),
             this.endDateTime.bind(this),
+            this.end.bind(this),
         ]));
 
         // Define conversation flow for confirm test
         this.addDialog(new WaterfallDialog(dialogIds.CONFIRM, [
             this.startConfirm.bind(this),
             this.endConfirm.bind(this),
+            this.end.bind(this),
         ]));
 
         // Define conversation flow for attachment test
         this.addDialog(new WaterfallDialog(dialogIds.ATTACHMENT, [
             this.startAttachment.bind(this),
             this.endAttachment.bind(this),
+            this.end.bind(this),
         ]));
 
         // define dialogs to be used
@@ -92,8 +98,6 @@ export class PromptsDialog extends ComponentDialog {
 
     // Ask the user what they'd like to test and then load the appropriate dialogs for that
     private promptForOptionSelection = async (step: WaterfallStepContext) => {
-        utilities.consolePrint('Prompt Choices');
-        // Display prompt
         return await step.prompt(promptIds.CHOICE, utilities.getTestChoiceParams(choices, 'Prompt'));
     }
 
@@ -127,7 +131,7 @@ export class PromptsDialog extends ComponentDialog {
         const reply = `You said: ${toEcho}`;
         await step.context.sendActivity(reply);
         console.log(reply);
-        console.log('\nCompleted [Text Prompt] Test\n');
+        utilities.endTestPrint('Text Prompt');
         return await step.beginDialog(dialogIds.PROMPTS_MAIN);
     }
 
@@ -143,7 +147,7 @@ export class PromptsDialog extends ComponentDialog {
         const reply = `You said: ${step.result}, which is a ${typeof step.result}`;
         await step.context.sendActivity(reply);
         console.log(reply);
-        console.log('\nCompleted [Number Prompt] Test\n');
+        utilities.endTestPrint('Number Prompt');
         return await step.beginDialog(dialogIds.PROMPTS_MAIN);
     }
 
@@ -159,7 +163,7 @@ export class PromptsDialog extends ComponentDialog {
         const reply = `You said: ${step.result.value}, which is a valid date-time string`;
         await step.context.sendActivity(reply);
         console.log(reply);
-        console.log('\nCompleted [DateTime Prompt] Test\n');
+        utilities.endTestPrint('DateTime Prompt');
         return await step.beginDialog(dialogIds.PROMPTS_MAIN);
     }
 
@@ -175,7 +179,7 @@ export class PromptsDialog extends ComponentDialog {
         const reply = `You said: ${step.result}, which is a valid Confirm boolean`;
         await step.context.sendActivity(reply);
         console.log(reply);
-        console.log('\nCompleted [Confirm Prompt] Test\n');
+        utilities.endTestPrint('Confirm Prompt');
         return await step.beginDialog(dialogIds.PROMPTS_MAIN);
     }
 
@@ -190,17 +194,19 @@ export class PromptsDialog extends ComponentDialog {
         const attachment = step.result[0];
         const reply =
             `You sent:\n
-            --Name: ${attachment.name}\n
-            --Content ${attachment.content}\n
-            --Content Type: ${attachment.contentType}\n
-            --Content URL: ${attachment.contentUrl}\n
-            --Thumbnail URL: ${attachment.thumbnailUrl}`;
+            **Name:** ${attachment.name}\n
+            **Content** ${attachment.content}\n
+            **Content Type:** ${attachment.contentType}\n
+            **Content URL:** ${attachment.contentUrl}\n
+            **Thumbnail URL:** ${attachment.thumbnailUrl}`;
         await step.context.sendActivity({
             text: 'Attachment:',
             attachments: [attachment],
         });
         console.log(reply);
-        console.log('\n[Attachment] Test Complete\n');
-        return await step.beginDialog(dialogIds.PROMPTS_MAIN);
+        utilities.endTestPrint('Attachment Prompt');
+    }
+    private end = async (step: WaterfallStepContext) => {
+        return await step.replaceDialog(dialogIds.PROMPTS_MAIN);
     }
 }

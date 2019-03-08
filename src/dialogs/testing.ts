@@ -54,12 +54,7 @@ export class TestingDialog extends ComponentDialog {
 
     // Ask the user what they'd like to test and then load the appropriate dialogs for that
     private promptForTesting = async (step: WaterfallStepContext) => {
-        utilities.consolePrint('Testing Selection');
-        return await step.prompt(promptIds.CHOICE, {
-            choices: Object.keys(choices).map((key) => choices[key]),
-            prompt: 'What would you like to test?',
-            retryPrompt: 'I didn\'t understand that. **Please click an option**',
-        });
+        return await step.prompt(promptIds.CHOICE, utilities.getTestChoiceParams(choices, 'Main Testing'));
     }
 
     private createAppropriateWaterfall = async (step: WaterfallStepContext) => {
@@ -78,6 +73,7 @@ export class TestingDialog extends ComponentDialog {
     }
 
     private restart = async (step: WaterfallStepContext) => {
+        utilities.endTestPrint('Main Testing');
         return await step.replaceDialog(dialogIds.TESTS_MAIN, step.options);
     }
 }
