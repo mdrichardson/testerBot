@@ -1,7 +1,8 @@
-import { BotAdapter, MemoryStorage, StatePropertyAccessor, TurnContext } from 'botbuilder';
+import { BotAdapter, MemoryStorage } from 'botbuilder';
+import { BlobStorage, CosmosDbStorage } from 'botbuilder-azure';
 import { ChoicePrompt, ComponentDialog, WaterfallDialog, WaterfallStepContext } from 'botbuilder-dialogs';
 
-import { BlobStorage, CosmosDbStorage } from 'botbuilder-azure';
+import utilities from '../resources/utilities';
 import { LuisDialog } from './luis';
 import { ProactiveDialog } from './proactive';
 import { PromptsDialog } from './prompts';
@@ -22,6 +23,10 @@ const choices = {
     luis: 'LUIS',
     qnaMaker: 'QnA Maker',
 };
+
+const promptIds = {
+    CHOICE: 'choicePrompt',
+};
 export class TestingDialog extends ComponentDialog {
 
     constructor(dialogId: string,
@@ -40,7 +45,7 @@ export class TestingDialog extends ComponentDialog {
         ]));
 
         // define dialogs to be used
-        this.addDialog(new ChoicePrompt('choicePrompt'));
+        this.addDialog(new ChoicePrompt(promptIds.CHOICE));
         this.addDialog(new PromptsDialog(dialogIds.PROMPTS_DIALOG));
         this.addDialog(new RichCardsDialog(dialogIds.RICH_CARDS_DIALOG));
         this.addDialog(new ProactiveDialog(dialogIds.PROACTIVE_DIALOG, adapter, myStorage));
@@ -49,10 +54,11 @@ export class TestingDialog extends ComponentDialog {
 
     // Ask the user what they'd like to test and then load the appropriate dialogs for that
     private promptForTesting = async (step: WaterfallStepContext) => {
-        return await step.prompt('choicePrompt', {
+        utilities.consolePrint('Testing Selection');
+        return await step.prompt(promptIds.CHOICE, {
             choices: Object.keys(choices).map((key) => choices[key]),
             prompt: 'What would you like to test?',
-            retryPrompt: 'I didn\'t understand that. Please click an option',
+            retryPrompt: 'I didn\'t understand that. **Please click an option**',
         });
     }
 
