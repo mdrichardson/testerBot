@@ -1,8 +1,9 @@
-import { Activity, AudioCard, CardFactory, HeroCard, VideoCard } from 'botbuilder';
+import { Activity, CardFactory } from 'botbuilder';
 import { ChoicePrompt, ComponentDialog, TextPrompt, WaterfallDialog, WaterfallStepContext } from 'botbuilder-dialogs';
 
 import * as adaptiveCard from '../resources/adaptiveCard.json';
 import { cardActions } from '../resources/cardActions';
+import utilities from '../resources/utilities';
 
 const choices = {
     adaptive: 'Adaptive',
@@ -57,10 +58,11 @@ export class RichCardsDialog extends ComponentDialog {
 
     // Ask the user what they'd like to test and then load the appropriate dialogs for that
     private promptForOptionSelection = async (step: WaterfallStepContext) => {
+        utilities.consolePrint('Rich Card Choices');
         // Display prompt
         return await step.prompt(promptIds.CHOICE, {
             choices: Object.keys(choices).map((key) => choices[key]),
-            prompt: 'What [Rich Card] would you like to test?',
+            prompt: 'What **[Rich Card]** would you like to test?',
             retryPrompt: 'I didn\'t understand that. Please click an option',
         });
     }
@@ -269,6 +271,7 @@ export class RichCardsDialog extends ComponentDialog {
             attachments: [card, card, card],
             attachmentLayout: 'carousel',
         };
+        utilities.consolePrint(cardName);
         // send all cards
         return await step.context.sendActivities([single, list, carousel]);
     }
