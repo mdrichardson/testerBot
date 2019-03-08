@@ -13,7 +13,7 @@
         {
             "type": "endpoint",
             "appId": "8a4e561c-a361-4d49-83f0-075e2b95d712",
-            "appPassword": "KAS3N24KbTyiLchHY8fLXg==!xZzi5hTHvuOugOqOorFQSKR69Hv+H2QQ4W149pc/gd0=",
+            "appPassword": "X+7CQ16c2zB4PQdq4Q50WA==!y1iXvBvrU4rQVP1yqDV/hkUejtZjB6U0k6sr0zLtW5s=",
             "endpoint": "https://vmicrictesterdqt8.azurewebsites.net/api/messages",
             "id": "34",
             "name": "production"
@@ -21,16 +21,16 @@
         {
             "type": "luis",
             "appId": "c48bf96f-3183-4b5b-ad97-d57ce1354992",
-            "authoringKey": "ClRvACleR/2rYABYEejH+Q==!OeQ6saaTnu9SLY1kniPCX5Hr42zoQMvyff95vQs4aN9p3XGNrQxEQcvkAdUPfk14",
+            "authoringKey": "LbNJ9KrsQBBWogwjD3rYbA==!Uup6aueig22YAHVf/kcYAKF5l8xt3TNkXCYFmfuPIwGZuh5oYbyBU0W+qX/LKN9a",
             "id": "c48bf96f-3183-4b5b-ad97-d57ce1354992",
             "name": "v-micricTester",
             "region": "westus",
-            "subscriptionKey": "KeQg9bd32bD5KRY4+6xgXg==!8MTTMIuYNWJBR+3p0Y3gB0RwunZUJAfIlDKu+etxm0TeagJ/LUKb6zq/mc4RMuzR",
+            "subscriptionKey": "Kdcy9bTT5l1gaK/Vjv/2cA==!E/yNgvLWVFd2+Qvi91rbMNkF+QKapSPitGufgSqY82l6THfJ8Axa6hMnkq0ZyymP",
             "version": "0.1"
         },
         {
             "type": "blob",
-            "connectionString": "o/nlWSZNSiK3y15OYlvRYg==!ZxEAUtkepLKv1+4SUjHlayaw3xGt3BeoycJP4QSk5J/tOot5BWV9NuB0omsvJk9wDaBuhzUslu0vEU/NulGUaR+BB7cwJPY1Tu7LmNZXJCoxy8+q7CplJOIIVElzxy+Xk5vlo1QL+FjFBWauI2nOylmo5/GF0HQSWzYBHMuUOgBi3/aI6Z+oBafuvp52H0EiUpMJ8d7slB302unK9H3wGIEGf58lKGaFRFMAMKNm/XQvAo5Rvrp+3XBQP12Do2on",
+            "connectionString": "qwZX8uQWqaI5iqpqibyypw==!7lnG9HNK92zBtnWP9J+4i7/Zpkppgr4YhXQRD8XZsdSVnJyrr2kSbF4H8W+wH/irq/Rv3f5sXjubVC743Hxn2/oq658zIC2lKve9tOMJm+YcuMNjWHGuttmy9q4xrY3gQUvYebd+t4eV1+nlwSwuIf3HxpWtGnh7au2UbK6EBvOKPxBqipt/CuiUQfDDNsmDPhas463SNZiC6Tn83QDmEkO9wO0n4yUpApnJqIwJFWmnSztp4hzfLDOPdixrUaa3",
             "container": "testerbot",
             "name": "v-micricStorage",
             "resourceGroup": "v-micricMAIN",
@@ -42,6 +42,6 @@
     ],
     "padlock": "f64Jj/FigXs1Rte75m3ZCA==!ZbawJSy396zJLbqo25GeeRc/usg0NjJUckpXL0h2TkXAQ4aPI6TmDnYqSiy4CZtF",
     "version": "2.0",
-    "path": "C:\\Users\\v-micric\\Documents\\Code\\testerBot\\v-micricTester.bot",
+    "path": "C:\\Users\\v-micric\\Documents\\Code\\Bots - Mine\\testerBot-Node\\v-micricTester.bot",
     "overrides": null
 }

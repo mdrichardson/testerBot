@@ -1,4 +1,4 @@
-import { CardFactory } from "botbuilder";
+import { CardFactory } from 'botbuilder';
 
 export const cardActions = CardFactory.actions([
     {

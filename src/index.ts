@@ -1,30 +1,24 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { BlobStorage, CosmosDbStorage } from 'botbuilder-azure';
 import { config } from 'dotenv';
 import * as path from 'path';
 import * as restify from 'restify';
 
-// Import required bot services.
-// See https://aka.ms/bot-services to learn more about the different parts of a bot.
 import { BotFrameworkAdapter, ConversationState, MemoryStorage, UserState } from 'botbuilder';
-
-// Import required bot configuration.
+import { BlobStorage, CosmosDbStorage } from 'botbuilder-azure';
 import { BlobStorageService, BotConfiguration, IEndpointService } from 'botframework-config';
 
 // Read botFilePath and botFileSecret from .env file
 // Note: Ensure you have a .env file and include botFilePath and botFileSecret.
 const ENV_FILE = path.join(__dirname, '..', '.env');
-const loadFromEnv = config({ path: ENV_FILE });
+config({ path: ENV_FILE });
 
 // Get the .bot file path.
-// See https://aka.ms/about-bot-file to learn more about .bot file its use and bot configuration.
 const BOT_FILE = path.join(__dirname, '..', (process.env.botFilePath || ''));
 let botConfig: BotConfiguration;
 
 try {
-    // Read bot configuration from .bot file.
     botConfig = BotConfiguration.loadSync(BOT_FILE, process.env.botFileSecret);
 } catch (err) {
     console.error(`\nError reading bot file. Please ensure you have valid botFilePath and botFileSecret set for your environment.`);
@@ -39,7 +33,6 @@ const DEV_ENVIRONMENT = 'development';
 
 // Define name of the endpoint configuration section from the .bot file.
 const BOT_CONFIGURATION = (process.env.NODE_ENV || DEV_ENVIRONMENT);
-const COSMOS_CONFIGURATION_ID = '10';
 const BLOB_CONFIGURATION_ID = '179'; // blob service's "id" in .bot file
 
 // Get bot endpoint configuration by service name.
@@ -98,16 +91,9 @@ const blobStorage = new BlobStorage({
 const myStorage = cosmosStorage;
 // const myStorage = memoryStorage;
 // const myStorage = blobStorage;
+
 const conversationState: ConversationState = new ConversationState(myStorage);
 const userState: UserState = new UserState(myStorage);
-
-// Cosmos
-// const conversationState: ConversationState = new ConversationState(cosmosStorage);
-// const userState: UserState = new UserState(cosmosStorage);
-
-// Blob
-// const conversationState: ConversationState = new ConversationState(blobStorage);
-// const userState: UserState = new UserState(blobStorage);
 
 // Create the main dialog.
 let testerBot;
