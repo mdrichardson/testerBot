@@ -5,7 +5,7 @@ export default {
         console.log(`\nConducting [` + chalk.green(testName) + `] Test\n`);
     },
     endTestPrint(testName: string): void {
-        console.log(`\nConducting [` + chalk.red(testName) + `] Test\n`);
+        console.log(`\nFinished [` + chalk.red(testName) + `] Test\n`);
     },
     getTestChoiceParams(choices: any, testName: string): object {
         this.beginTestPrint(testName);
