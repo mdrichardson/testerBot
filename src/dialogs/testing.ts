@@ -72,8 +72,6 @@ export class TestingDialog extends ComponentDialog {
     }
 
     private restart = async (step: WaterfallStepContext) => {
-        // tslint:disable-next-line:no-string-literal
-        const reference = step.options['reference'];
-        return await step.replaceDialog(dialogIds.TESTS_MAIN, { reference });
+        return await step.replaceDialog(dialogIds.TESTS_MAIN, step.options);
     }
 }

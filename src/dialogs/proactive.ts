@@ -18,6 +18,11 @@ const promptIds = {
     TEXT: 'textPrompt',
 };
 
+interface IStepOptionsProactive {
+    proactiveId: string;
+    reference: string;
+}
+
 export class ProactiveDialog extends ComponentDialog {
     public adapter: BotAdapter;
     private myStorage: MemoryStorage|CosmosDbStorage|BlobStorage;
@@ -53,8 +58,8 @@ export class ProactiveDialog extends ComponentDialog {
 
     // Ask the user what they'd like to test and then load the appropriate dialogs for that
     private promptForOptionSelection = async (step: WaterfallStepContext) => {
-        // tslint:disable-next-line:no-string-literal
-        this.PROACTIVE_STORAGE_ID = 'proactiveIdList-' + step.options['proactiveId'];
+        const options = step.options as IStepOptionsProactive;
+        this.PROACTIVE_STORAGE_ID = 'proactiveIdList-' + options.proactiveId;
         // Display prompt
         return await step.prompt(promptIds.CHOICE, {
             choices: Object.keys(choices).map((key) => choices[key]),
@@ -94,8 +99,8 @@ export class ProactiveDialog extends ComponentDialog {
         }
         const idsList = storage[this.PROACTIVE_STORAGE_ID].list;
         await step.context.sendActivity(`Creating ID #: ${id}`);
-        // tslint:disable-next-line:no-string-literal
-        const reference = step.options['reference'];
+        const options = step.options as IStepOptionsProactive;
+        const reference = options.reference;
         idsList[id] = { completed: false, reference };
         try {
             const changes = {};
@@ -112,7 +117,6 @@ export class ProactiveDialog extends ComponentDialog {
     }
 
     private checkProactive = async (step: WaterfallStepContext) => {
-        // tslint:disable-next-line:no-string-literal
         const storage = await this.myStorage.read([this.PROACTIVE_STORAGE_ID]);
         const idsList = storage[this.PROACTIVE_STORAGE_ID].list;
         if (Object.keys(idsList).length > 0) {

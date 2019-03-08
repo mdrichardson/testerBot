@@ -1,3 +1,4 @@
+import { RecognizerResult } from 'botbuilder-core';
 import { ChoicePrompt, ComponentDialog, TextPrompt, WaterfallDialog, WaterfallStepContext } from 'botbuilder-dialogs';
 
 const choices = {
@@ -50,9 +51,9 @@ export class LuisDialog extends ComponentDialog {
 
     // Ask the user what they'd like to test and then load the appropriate dialogs for that
     private promptForOptionSelection = async (step: WaterfallStepContext) => {
-        // tslint:disable-next-line:no-string-literal
-        if (step.options['intents']) {
-            return await step.replaceDialog(dialogIds.LUIS_INTENT, step.options);
+        const options = step.options as Partial<RecognizerResult>;
+        if (options.intents) {
+            return await step.replaceDialog(dialogIds.LUIS_INTENT, options);
         }
         // Display prompt
         return await step.prompt(promptIds.CHOICE, {
@@ -74,8 +75,8 @@ export class LuisDialog extends ComponentDialog {
     }
 
     private promptForIntent = async (step: WaterfallStepContext) => {
-        // tslint:disable-next-line:no-string-literal
-        if (step.options['intents']) {
+        const options = step.options as Partial<RecognizerResult>;
+        if (options.intents) {
             return await step.next();
         }
         return await step.prompt(promptIds.TEXT, {
@@ -84,12 +85,17 @@ export class LuisDialog extends ComponentDialog {
     }
 
     private displayIntent = async (step: WaterfallStepContext) => {
-        // tslint:disable:no-string-literal
-        if (step.options['entities']) {
-            const entityName = Object.keys(step.options['entities']).filter((key) => key !== '$instance');
-            const result = step.options['entities'][entityName[0]][0];
+        const options = step.options as Partial<RecognizerResult>;
+        if (options.entities) {
+            const entityName = Object.keys(options.entities).filter((key) => key !== '$instance') || '**No Entity Found**';
+            let result;
+            try {
+                result = options.entities[entityName[0]][0];
+            } catch (err) {
+                result = 'No Entity Found';
+            }
             await step.context.sendActivity(`Your Top Entity: ${entityName}: ${result}`);
-            return await step.context.sendActivity(`Everything else:\n    ${JSON.stringify(step.options, null, 2)}`);
+            return await step.context.sendActivity(`Everything else:\n    ${JSON.stringify(options, null, 2)}`);
         } else {
             await step.context.sendActivity(`That didn't match an intent and entity.\n Try "I like IPAs"`);
             return await step.replaceDialog(dialogIds.LUIS_INTENT);
@@ -107,6 +113,6 @@ export class LuisDialog extends ComponentDialog {
     }
 
     private end = async (step: WaterfallStepContext) => {
-        return await step.replaceDialog(dialogIds.LUIS_MAIN);
+        return await step.beginDialog(dialogIds.LUIS_MAIN);
     }
 }

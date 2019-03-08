@@ -19,7 +19,7 @@ const LUIS_CONFIGURATION = 'v-micricTester';
 const LUIS_INTENTS = {
     CANCEL: 'Utilities_Cancel',
     HELP: 'Utilities_Help',
-}
+};
 
 // Dialog IDs
 const TESTING_DIALOG_ID = 'testingOptions';
@@ -28,7 +28,6 @@ export class TesterBot {
     private readonly dialogs: DialogSet;
     private luisRecognizer: LuisRecognizer;
     private dialogState: StatePropertyAccessor<DialogState>;
-    private proactiveStateAccessor: StatePropertyAccessor<any>;
     private conversationState: ConversationState;
     private userState: UserState;
     private proactiveId: string;
@@ -49,7 +48,7 @@ export class TesterBot {
             applicationId: luisConfig.appId,
             // CAUTION: Its better to assign and use a subscription key instead of authoring key here.
             endpoint: luisConfig.getEndpoint(),
-            endpointKey: luisConfig.authoringKey,
+            endpointKey: luisConfig.subscriptionKey,
         });
 
         // Create the property accessors for user and conversation state for each storage method

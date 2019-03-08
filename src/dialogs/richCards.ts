@@ -1,4 +1,4 @@
-import { Activity, CardFactory } from 'botbuilder';
+import { Activity, AudioCard, CardFactory, HeroCard, VideoCard } from 'botbuilder';
 import { ChoicePrompt, ComponentDialog, TextPrompt, WaterfallDialog, WaterfallStepContext } from 'botbuilder-dialogs';
 
 import * as adaptiveCard from '../resources/adaptiveCard.json';
@@ -26,6 +26,10 @@ const promptIds = {
     TEXT: 'textPrompt',
 };
 
+interface IStepOptionsCard {
+    card: any;
+    cardName: string;
+}
 export class RichCardsDialog extends ComponentDialog {
 
     constructor(dialogId: string) {
@@ -245,10 +249,9 @@ export class RichCardsDialog extends ComponentDialog {
     }
 
     private displayCards = async (step: WaterfallStepContext) => {
-        // tslint:disable-next-line:no-string-literal
-        const card = step.options['card'];
-        // tslint:disable-next-line:no-string-literal
-        const cardName = step.options['cardName'];
+        const options = step.options as IStepOptionsCard;
+        const card = options.card;
+        const cardName = options.cardName;
         // define single card
         const single: Partial<Activity> = {
             text: `${cardName} Card - Single`,
@@ -271,6 +274,6 @@ export class RichCardsDialog extends ComponentDialog {
     }
 
     private end = async (step: WaterfallStepContext) => {
-        return await step.beginDialog(dialogIds.RICH_CARDS_MAIN);
+        return await step.beginDialog('testingOptions');
     }
 }
