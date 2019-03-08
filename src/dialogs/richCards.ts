@@ -267,7 +267,9 @@ export class RichCardsDialog extends ComponentDialog {
         };
         utilities.beginTestPrint(cardName);
         // send all cards
-        return await step.context.sendActivities([single, list, carousel]);
+        await step.context.sendActivities([single, list, carousel]);
+        utilities.endTestPrint(cardName);
+        return await step.next();
     }
 
     private end = async (step: WaterfallStepContext) => {

@@ -11,7 +11,7 @@ const choices = {
 
 const dialogIds = {
     PROACTIVE_MAIN: 'proactiveMainDialog',
-    PROACTIVE_GET_ID: 'proactiveGetIdDialog',
+    INITIATE_CLOSE: 'proactiveGetIdDialog',
 };
 
 const promptIds = {
@@ -42,8 +42,8 @@ export class ProactiveDialog extends ComponentDialog {
             this.end.bind(this),
         ]));
 
-        this.addDialog(new WaterfallDialog(dialogIds.PROACTIVE_GET_ID, [
-            this.getId.bind(this),
+        this.addDialog(new WaterfallDialog(dialogIds.INITIATE_CLOSE, [
+            this.initiateClose.bind(this),
             this.close.bind(this),
             this.end.bind(this),
         ]));
@@ -75,7 +75,7 @@ export class ProactiveDialog extends ComponentDialog {
                 await this.checkProactive(step);
                 break;
             case choices.CLOSE:
-                return await step.replaceDialog(dialogIds.PROACTIVE_GET_ID);
+                return await step.replaceDialog(dialogIds.INITIATE_CLOSE);
             default:
                 return await step.endDialog();
         }
@@ -83,6 +83,7 @@ export class ProactiveDialog extends ComponentDialog {
     }
 
     private startProactive = async (step: WaterfallStepContext) => {
+        utilities.beginTestPrint('Create Proactive');
         // Generate random string for job Id
         let id = '';
         let randomAscii;
@@ -115,9 +116,12 @@ export class ProactiveDialog extends ComponentDialog {
         } catch (err) {
             await step.context.sendActivity(`Failed to save id to storage`);
         }
+        utilities.endTestPrint('Create Proactive');
+        return await step.next();
     }
 
     private checkProactive = async (step: WaterfallStepContext) => {
+        utilities.beginTestPrint('Check Proactive');
         const storage = await this.myStorage.read([this.PROACTIVE_STORAGE_ID]);
         const idsList = storage[this.PROACTIVE_STORAGE_ID].list;
 
@@ -131,9 +135,12 @@ export class ProactiveDialog extends ComponentDialog {
         } else {
             await step.context.sendActivity(`There are no active ids in storage`);
         }
+        utilities.endTestPrint('Check Proactive');
+        return await step.next();
     }
 
-    private getId = async (step: WaterfallStepContext) => {
+    private initiateClose = async (step: WaterfallStepContext) => {
+        utilities.beginTestPrint('Close Proactive');
         const storage = await this.myStorage.read([this.PROACTIVE_STORAGE_ID]);
         const idsList = storage[this.PROACTIVE_STORAGE_ID].list;
 
@@ -154,7 +161,7 @@ export class ProactiveDialog extends ComponentDialog {
 
         if (!idInfo) {
             await step.context.sendActivity(`Sorry. Nothing in storage with ID: **${id}**. Try again.`);
-            return await step.replaceDialog(dialogIds.PROACTIVE_GET_ID);
+            return await step.replaceDialog(dialogIds.INITIATE_CLOSE);
         } else {
             if (idInfo.reference && !idInfo.completed) {
                 // Send the proactive message to the user who created the id, using the adapter
@@ -176,6 +183,8 @@ export class ProactiveDialog extends ComponentDialog {
                 await step.context.sendActivity(`This id is already completed. **Please create a new one.**`);
             }
         }
+        utilities.endTestPrint('Close Proactive');
+        return await step.next();
     }
 
     private end = async (step: WaterfallStepContext) => {

@@ -120,7 +120,7 @@ export class PromptsDialog extends ComponentDialog {
     }
 
     private startText = async (step: WaterfallStepContext) => {
-        console.log('\nConducting [Text Prompt] Test\n');
+        utilities.beginTestPrint('Text Prompt');
         return await step.prompt(promptIds.TEXT, {
             prompt: 'Enter some text and I\'ll repeat it back.',
         });
@@ -128,7 +128,7 @@ export class PromptsDialog extends ComponentDialog {
 
     private endText = async (step: WaterfallStepContext) => {
         const toEcho = step.result;
-        const reply = `You said: ${toEcho}`;
+        const reply = `You said: **${toEcho}**`;
         await step.context.sendActivity(reply);
         console.log(reply);
         utilities.endTestPrint('Text Prompt');
@@ -136,7 +136,7 @@ export class PromptsDialog extends ComponentDialog {
     }
 
     private startNumber = async (step: WaterfallStepContext) => {
-        console.log('\nConducting [Text Prompt] Test\n');
+        utilities.beginTestPrint('Number Prompt');
         return await step.prompt(promptIds.NUMBER, {
             prompt: 'Enter a number and I\'ll repeat it back and confirm it was a number.',
             retryPrompt: 'That wasn\'t a number.',
@@ -144,7 +144,7 @@ export class PromptsDialog extends ComponentDialog {
     }
 
     private endNumber = async (step: WaterfallStepContext) => {
-        const reply = `You said: ${step.result}, which is a ${typeof step.result}`;
+        const reply = `You said: **${step.result}**, which is a **${typeof step.result}**`;
         await step.context.sendActivity(reply);
         console.log(reply);
         utilities.endTestPrint('Number Prompt');
@@ -152,7 +152,7 @@ export class PromptsDialog extends ComponentDialog {
     }
 
     private startDateTime = async (step: WaterfallStepContext) => {
-        console.log('\nConducting [DateTime Prompt] Test\n');
+        utilities.beginTestPrint('DateTime Prompt');
         return await step.prompt(promptIds.DATETIME, {
             prompt: 'Enter a Date-Time string.',
             retryPrompt: 'That wasn\'t a valid date-time string. Please use an appropriate format.',
@@ -168,7 +168,7 @@ export class PromptsDialog extends ComponentDialog {
     }
 
     private startConfirm = async (step: WaterfallStepContext) => {
-        console.log('\nConducting [Confirm Prompt] Test\n');
+        utilities.beginTestPrint('Confirm Prompt');
         return await step.prompt(promptIds.CONFIRM, {
             prompt: 'Please Confirm.',
             retryPrompt: 'That wasn\'t a valid confirmation. Must be boolean or click buttons.',
@@ -176,7 +176,7 @@ export class PromptsDialog extends ComponentDialog {
     }
 
     private endConfirm = async (step: WaterfallStepContext) => {
-        const reply = `You said: ${step.result}, which is a valid Confirm boolean`;
+        const reply = `You said: **${step.result}**, which is a valid Confirm boolean`;
         await step.context.sendActivity(reply);
         console.log(reply);
         utilities.endTestPrint('Confirm Prompt');
@@ -184,7 +184,7 @@ export class PromptsDialog extends ComponentDialog {
     }
 
     private startAttachment = async (step: WaterfallStepContext) => {
-        console.log('\nConducting [Attachment Prompt] Test\n');
+        utilities.beginTestPrint('Attachment Prompt');
         return await step.prompt(promptIds.ATTACHMENT, {
             prompt: 'Send me an attachment of any kind and I\'ll tell you all the details I know about it.',
         });
