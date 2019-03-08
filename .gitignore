@@ -3,3 +3,4 @@ lib
 .env
 design.txt
 iisnode.yml
+publish*
