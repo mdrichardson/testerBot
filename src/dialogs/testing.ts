@@ -1,6 +1,5 @@
 import { BotAdapter, MemoryStorage, StatePropertyAccessor, TurnContext } from 'botbuilder';
 import { ChoicePrompt, ComponentDialog, WaterfallDialog, WaterfallStepContext } from 'botbuilder-dialogs';
-import { UserProfile } from '../user/userProfile';
 
 import { BlobStorage, CosmosDbStorage } from 'botbuilder-azure';
 import { LuisDialog } from './luis';
@@ -25,25 +24,16 @@ const choices = {
 };
 export class TestingDialog extends ComponentDialog {
 
-    private userProfileAccessor: StatePropertyAccessor<UserProfile>;
-
     constructor(dialogId: string,
-                userProfileAccessor: StatePropertyAccessor<UserProfile>,
-                proactiveStateAccessor: StatePropertyAccessor<any>,
                 adapter: BotAdapter,
                 myStorage: MemoryStorage|CosmosDbStorage|BlobStorage) {
         super(dialogId);
 
         // validate what was passed in
         if (!dialogId) { throw new Error('Missing parameter.  dialogId is required'); }
-        if (!userProfileAccessor) { throw new Error('Missing parameter.  userProfileAccessor is required'); }
-
-        // Save off our state accessor for later use
-        this.userProfileAccessor = userProfileAccessor;
 
         // Define conversation flow
-        this.addDialog(new WaterfallDialog<UserProfile>(dialogIds.TESTS_MAIN, [
-            this.initializeStateStep.bind(this),
+        this.addDialog(new WaterfallDialog(dialogIds.TESTS_MAIN, [
             this.promptForTesting.bind(this),
             this.createAppropriateWaterfall.bind(this),
             this.restart.bind(this),
@@ -57,24 +47,8 @@ export class TestingDialog extends ComponentDialog {
         this.addDialog(new LuisDialog(dialogIds.LUIS_DIALOG));
     }
 
-    /**
-     * Waterfall Dialog step functions.
-     *
-     * Initialize our state.  See if the WaterfallDialog has state pass to it
-     * If not, then just new up an empty UserProfile object
-     *
-     * @param {WaterfallStepContext} step contextual information for the current step being executed
-     */
-    private initializeStateStep = async (step: WaterfallStepContext<UserProfile>) => {
-        const userProfile = await this.userProfileAccessor.get(step.context);
-        if (userProfile === undefined) {
-            await this.userProfileAccessor.set(step.context, new UserProfile());
-        }
-        return await step.next();
-    }
-
     // Ask the user what they'd like to test and then load the appropriate dialogs for that
-    private promptForTesting = async (step: WaterfallStepContext<UserProfile>) => {
+    private promptForTesting = async (step: WaterfallStepContext) => {
         return await step.prompt('choicePrompt', {
             choices: Object.keys(choices).map((key) => choices[key]),
             prompt: 'What would you like to test?',
@@ -82,7 +56,7 @@ export class TestingDialog extends ComponentDialog {
         });
     }
 
-    private createAppropriateWaterfall = async (step: WaterfallStepContext<UserProfile>) => {
+    private createAppropriateWaterfall = async (step: WaterfallStepContext) => {
         switch (step.result.value) {
             case choices.prompts:
                 return await step.replaceDialog(dialogIds.PROMPTS_DIALOG);

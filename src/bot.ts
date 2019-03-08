@@ -9,11 +9,9 @@ import { BotConfiguration, CosmosDbService, LuisService } from 'botframework-con
 import { BlobStorage, CosmosDbStorage } from 'botbuilder-azure';
 import { LuisDialog } from './dialogs/luis';
 import { TestingDialog } from './dialogs/testing';
-import { UserProfile } from './user/userProfile';
 
 // State Accessor Properties
 const DIALOG_STATE_PROPERTY = 'dialogStatePropertyAccessor';
-const USER_PROFILE_PROPERTY = 'userProfilePropertyAccessor';
 
 // this is the LUIS NAME entry in the .bot file.
 const LUIS_CONFIGURATION = 'v-micricTester';
@@ -30,7 +28,6 @@ export class TesterBot {
     private readonly dialogs: DialogSet;
     private luisRecognizer: LuisRecognizer;
     private dialogState: StatePropertyAccessor<DialogState>;
-    private userProfileAccessor: StatePropertyAccessor<UserProfile>;
     private proactiveStateAccessor: StatePropertyAccessor<any>;
     private conversationState: ConversationState;
     private userState: UserState;
@@ -56,12 +53,11 @@ export class TesterBot {
         });
 
         // Create the property accessors for user and conversation state for each storage method
-        this.userProfileAccessor = userState.createProperty(USER_PROFILE_PROPERTY);
         this.dialogState = conversationState.createProperty(DIALOG_STATE_PROPERTY);
 
         // Create top-level dialog(s)
         this.dialogs = new DialogSet(this.dialogState)
-            .add(new TestingDialog(TESTING_DIALOG_ID, this.userProfileAccessor, this.proactiveStateAccessor, adapter, myStorage))
+            .add(new TestingDialog(TESTING_DIALOG_ID, adapter, myStorage))
             .add(new LuisDialog('luisDialog'));
 
         this.conversationState = conversationState;
@@ -98,11 +94,6 @@ export class TesterBot {
             // Perform a call to LUIS to retreive results for the current activity message
             const luisResults = await this.luisRecognizer.recognize(context);
             const topIntent = LuisRecognizer.topIntent(luisResults);
-
-            // Update user profile with any entries captured by LUIS
-            // This could be user responding with their name or city while we are in the middle of dialog,
-            // or user saying something like 'i'm {userName}' while we have no active multi-turn dialog.
-            await this.updateUserProfile(luisResults, context);
 
             // Based on LUIS topIntent, evaluate if we have an interruption.
             // Interruption here refers to user looking for help/ cancel existing dialog
@@ -212,20 +203,6 @@ export class TesterBot {
                 return true;
             default:
                 return false; // is not interrupt
-        }
-    }
-
-    /**
-     * Helper function to update user profile with entities returned by LUIS.
-     *
-     * @param {LuisResults} luisResults - LUIS recognizer results
-     * @param {TurnContext} context - TurnContext context
-     */
-    // TODO: Add LUIS entities -  See BasicBot for examples
-    private updateUserProfile = async (luisResults: RecognizerResult, context: TurnContext) => {
-        // Do we have any entities?
-        if (Object.keys(luisResults.entities).length !== 1) {
-            return true;
         }
     }
 }
