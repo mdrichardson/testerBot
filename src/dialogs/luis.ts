@@ -1,5 +1,6 @@
 import { RecognizerResult } from 'botbuilder-core';
 import { ChoicePrompt, ComponentDialog, TextPrompt, WaterfallDialog, WaterfallStepContext } from 'botbuilder-dialogs';
+import utilities from '../resources/utilities';
 
 const choices = {
     INTENT: 'Intent/Entity',
@@ -56,11 +57,7 @@ export class LuisDialog extends ComponentDialog {
             return await step.replaceDialog(dialogIds.LUIS_INTENT, options);
         }
         // Display prompt
-        return await step.prompt(promptIds.CHOICE, {
-            choices: Object.keys(choices).map((key) => choices[key]),
-            prompt: 'What part of [LUIS] would you like to test?',
-            retryPrompt: 'I didn\'t understand that. Please click an option',
-        });
+        return await step.prompt(promptIds.CHOICE, utilities.getTestChoiceParams(choices, 'LUIS'));
     }
 
     private executeAppropriateAction = async (step: WaterfallStepContext) => {
@@ -75,6 +72,7 @@ export class LuisDialog extends ComponentDialog {
     }
 
     private promptForIntent = async (step: WaterfallStepContext) => {
+        utilities.beginTestPrint('LUIS Intents/Entities');
         const options = step.options as Partial<RecognizerResult>;
         if (options.intents) {
             return await step.next();
@@ -95,24 +93,29 @@ export class LuisDialog extends ComponentDialog {
                 result = 'No Entity Found';
             }
             await step.context.sendActivity(`Your Top Entity: ${entityName}: ${result}`);
-            return await step.context.sendActivity(`Everything else:\n    ${JSON.stringify(options, null, 2)}`);
+            await step.context.sendActivity(`Everything else:\n    ${JSON.stringify(options, null, 2)}`);
         } else {
             await step.context.sendActivity(`That didn't match an intent and entity.\n Try "I like IPAs"`);
-            return await step.replaceDialog(dialogIds.LUIS_INTENT);
+            await step.replaceDialog(dialogIds.LUIS_INTENT);
         }
+        utilities.endTestPrint('LUIS Intents/Entities');
+        return await step.next();
     }
 
     private promptForInterruption = async (step: WaterfallStepContext) => {
+        utilities.beginTestPrint('LUIS Interruption');
         return await step.prompt(promptIds.TEXT, {
             prompt: `Say "help" or "cancel" to interrupt.\nIf it works, the bot will notify you of the interrupt`,
         });
     }
 
     private sendIfNotInterrupted = async (step: WaterfallStepContext) => {
+        utilities.endTestPrint('FAILED LUIS Interruption');
         return await step.context.sendActivity(`You said: ${step.result}.\nYou shouldn't have seen this message if the interrupt was triggered correctly.`);
     }
 
     private end = async (step: WaterfallStepContext) => {
+        utilities.endTestPrint('LUIS');
         return await step.beginDialog(dialogIds.LUIS_MAIN);
     }
 }
