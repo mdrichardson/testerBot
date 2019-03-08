@@ -7,9 +7,9 @@ import { DialogContext, DialogSet, DialogState, DialogTurnResult, DialogTurnStat
 import { BotConfiguration, CosmosDbService, LuisService } from 'botframework-config';
 
 import { BlobStorage, CosmosDbStorage } from 'botbuilder-azure';
+import { LuisDialog } from './dialogs/luis';
 import { TestingDialog } from './dialogs/testing';
 import { UserProfile } from './user/userProfile';
-import { LuisDialog } from './dialogs/luis';
 
 // State Accessor Properties
 const DIALOG_STATE_PROPERTY = 'dialogStatePropertyAccessor';
@@ -18,11 +18,13 @@ const USER_PROFILE_PROPERTY = 'userProfilePropertyAccessor';
 // this is the LUIS NAME entry in the .bot file.
 const LUIS_CONFIGURATION = 'v-micricTester';
 
+const LUIS_INTENTS = {
+    CANCEL: 'Utilities_Cancel',
+    HELP: 'Utilities_Help',
+}
+
 // Dialog IDs
 const TESTING_DIALOG_ID = 'testingOptions';
-
-// Proactive ID List Property
-const ID_LIST = 'proactiveIdList';
 
 export class TesterBot {
     private readonly dialogs: DialogSet;
@@ -109,7 +111,11 @@ export class TesterBot {
                 if (dc.activeDialog !== undefined) {
                     // issue a re-prompt on the active dialog
                     await dc.repromptDialog();
-                } // Else: we don't have an active dialog so we do nothing
+                } else {
+                    // delete all of the dialogs and begin again with Testing Dialog
+                    await dc.cancelAllDialogs();
+                    await dc.beginDialog(TESTING_DIALOG_ID);
+                }
             } else {
                 // No interruption
                 // Display any information sent by the user sent through a postback, which is normally hidden, for debugging purposes
@@ -198,15 +204,12 @@ export class TesterBot {
         // see if there are any conversation interrupts we need to handle
         // TODO: Add LUIS interrupts
         switch (topIntent) {
-            case 'INTERRUPT':
-                if (dc.activeDialog) {
-                    // cancel all active dialog (clean the stack)
-                    await dc.cancelAllDialogs();
-                    await dc.context.sendActivity(`Ok. I've cancelled our last activity.`);
-                } else {
-                    await dc.context.sendActivity(`I don't have anything to cancel.`);
-                }
-                return true; // is interrupt
+            case LUIS_INTENTS.CANCEL:
+                await dc.context.sendActivity(`CANCEL INTERRUPTION.\nCancelling active dialogs...`);
+                return true;
+            case LUIS_INTENTS.HELP:
+                await dc.context.sendActivity(`HELP INTERRUPTION.\n**Click on one of the buttons, dummy.**`);
+                return true;
             default:
                 return false; // is not interrupt
         }

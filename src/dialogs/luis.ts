@@ -37,11 +37,11 @@ export class LuisDialog extends ComponentDialog {
             this.end.bind(this),
         ]));
 
-        // this.addDialog(new WaterfallDialog(dialogIds.LUIS_INTERRUPTION, [
-        //     this.promptForInterruption.bind(this),
-        //     this.sendIfNotInterrupted.bind(this),
-        //     this.end.bind(this),
-        // ]));
+        this.addDialog(new WaterfallDialog(dialogIds.LUIS_INTERRUPTION, [
+            this.promptForInterruption.bind(this),
+            this.sendIfNotInterrupted.bind(this),
+            this.end.bind(this),
+        ]));
 
         // define dialogs to be used
         this.addDialog(new ChoicePrompt(promptIds.CHOICE));
@@ -94,6 +94,16 @@ export class LuisDialog extends ComponentDialog {
             await step.context.sendActivity(`That didn't match an intent and entity.\n Try "I like IPAs"`);
             return await step.replaceDialog(dialogIds.LUIS_INTENT);
         }
+    }
+
+    private promptForInterruption = async (step: WaterfallStepContext) => {
+        return await step.prompt(promptIds.TEXT, {
+            prompt: `Say "help" or "cancel" to interrupt.\nIf it works, the bot will notify you of the interrupt`,
+        });
+    }
+
+    private sendIfNotInterrupted = async (step: WaterfallStepContext) => {
+        return await step.context.sendActivity(`You said: ${step.result}.\nYou shouldn't have seen this message if the interrupt was triggered correctly.`);
     }
 
     private end = async (step: WaterfallStepContext) => {
