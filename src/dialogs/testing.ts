@@ -54,7 +54,7 @@ export class TestingDialog extends ComponentDialog {
 
     // Ask the user what they'd like to test and then load the appropriate dialogs for that
     private promptForTesting = async (step: WaterfallStepContext) => {
-        return await step.prompt(promptIds.CHOICE, utilities.getTestChoiceParams(choices, 'Main Testing'));
+        return await step.prompt(promptIds.CHOICE, utilities.getTestChoiceParams(choices, 'Main Test'));
     }
 
     private createAppropriateWaterfall = async (step: WaterfallStepContext) => {

@@ -147,11 +147,13 @@ export class TesterBot {
                     if (context.activity.membersAdded[idx].id !== context.activity.recipient.id) {
                         // Welcome the user with information about themself
                         const userInfo = `` +
-                            `**Username:** ${context.activity.membersAdded[0].name},\n` +
-                            `**ID:** ${context.activity.membersAdded[0].id},\n` +
-                            `**Channel:** ${context.activity.channelId},\n` +
-                            `**Locale:** ${context.activity.locale},\n`;
-                        await context.sendActivity(`Welcome. Here\'s what I know about you:\n${userInfo}`);
+                            `&nbsp;&nbsp;**Username:** ${context.activity.membersAdded[0].name}\n` +
+                            `&nbsp;&nbsp;**ID:** ${context.activity.membersAdded[0].id}\n` +
+                            `&nbsp;&nbsp;**Channel:** ${context.activity.channelId}\n` +
+                            `&nbsp;&nbsp;**Locale:** ${context.activity.locale || 'None'}\n` +
+                            `&nbsp;&nbsp;**Conversastion ID:** ${context.activity.conversation.id}\n` +
+                            `&nbsp;&nbsp;**Service URL:** ${context.activity.serviceUrl}`;
+                        await context.sendActivity(`**Welcome!** Here\'s what I know about you:\n${userInfo}`);
                         const reference = TurnContext.getConversationReference(context.activity);
                         await dc.replaceDialog(TESTING_DIALOG_ID, { proactiveId: this.proactiveId, reference });
                     }
