@@ -89,7 +89,6 @@ export class TesterBot {
         if (context.activity.type === ActivityTypes.Message) {
             let dialogResult: DialogTurnResult;
             let luisResults: RecognizerResult;
-            luisResults = await this.luisRecognizer.recognize(context);
             let topIntent;
             // Perform a call to LUIS to retreive results for the current activity message (if in appropriate dialog by id substring)
             if (dc.activeDialog && dc.activeDialog.id.includes(luisDialogIdSubstring)) {
@@ -133,7 +132,7 @@ export class TesterBot {
                     // no active dialogs
                     case DialogTurnStatus.empty:
                         // Determine what to do with LUIS intents
-                        switch (topIntent) {
+                        switch (topIntent && dc.activeDialog && dc.activeDialog.id.includes(luisDialogIdSubstring)) {
                             default:
                                 // Let the user know we didn't recognize their intent
                                 await dc.context.sendActivity(`I don't understand and neither does LUIS.`);
