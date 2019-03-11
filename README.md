@@ -1,5 +1,5 @@
 # v-micricTester
-Provides a basic Microsoft Bot Builder bot for testing connectivity through various channels
+Provides a basic Microsoft Bot Builder bot for testing nearly every feature.
 
 This bot has been created using [Bot Framework][1].
 
