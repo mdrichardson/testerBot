@@ -10,7 +10,7 @@ import {
     StatePropertyAccessor,
     TurnContext,
     UserState } from 'botbuilder';
-import { LuisRecognizer } from 'botbuilder-ai';
+import { LuisRecognizer, QnAMakerEndpoint } from 'botbuilder-ai';
 import { BlobStorage, CosmosDbStorage } from 'botbuilder-azure';
 import { DialogContext, DialogSet, DialogState, DialogTurnResult, DialogTurnStatus } from 'botbuilder-dialogs';
 import { BotConfiguration, LuisService } from 'botframework-config';
@@ -45,7 +45,8 @@ export class TesterBot {
         userState: UserState,
         botConfig: BotConfiguration,
         adapter: BotAdapter,
-        myStorage: MemoryStorage|CosmosDbStorage|BlobStorage) {
+        myStorage: MemoryStorage|CosmosDbStorage|BlobStorage,
+        qnaEndpointSettings: QnAMakerEndpoint) {
 
         // add the LUIS recognizer
         let luisConfig: LuisService;
@@ -62,7 +63,7 @@ export class TesterBot {
 
         // Create top-level dialog(s)
         this.dialogs = new DialogSet(this.dialogState)
-            .add(new TestingDialog(TESTING_DIALOG_ID, adapter, myStorage))
+            .add(new TestingDialog(TESTING_DIALOG_ID, adapter, myStorage, qnaEndpointSettings))
             .add(new LuisDialog('luisDialog'));
 
         this.conversationState = conversationState;

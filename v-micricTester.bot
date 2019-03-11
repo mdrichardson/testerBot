@@ -13,7 +13,7 @@
         {
             "type": "endpoint",
             "appId": "8a4e561c-a361-4d49-83f0-075e2b95d712",
-            "appPassword": "X+7CQ16c2zB4PQdq4Q50WA==!y1iXvBvrU4rQVP1yqDV/hkUejtZjB6U0k6sr0zLtW5s=",
+            "appPassword": "VUkrQcb9+ybMLEgy6vNQJA==!HjJcd46mEI2KJlpM4UCxe4X2Eul8zQRKhDhwYr+AQrM=",
             "endpoint": "https://vmicrictesterdqt8.azurewebsites.net/api/messages",
             "id": "34",
             "name": "production"
@@ -21,27 +21,36 @@
         {
             "type": "luis",
             "appId": "c48bf96f-3183-4b5b-ad97-d57ce1354992",
-            "authoringKey": "LbNJ9KrsQBBWogwjD3rYbA==!Uup6aueig22YAHVf/kcYAKF5l8xt3TNkXCYFmfuPIwGZuh5oYbyBU0W+qX/LKN9a",
+            "authoringKey": "bo30gd0VBccFl3NRg1i02Q==!PvWPdh0L4HN/xtI5+MejoWMVP51/wi9nMgwgjYBVKDK0WCwE3XAjm2y0KcKe3oPl",
             "id": "c48bf96f-3183-4b5b-ad97-d57ce1354992",
             "name": "v-micricTester",
             "region": "westus",
-            "subscriptionKey": "Kdcy9bTT5l1gaK/Vjv/2cA==!E/yNgvLWVFd2+Qvi91rbMNkF+QKapSPitGufgSqY82l6THfJ8Axa6hMnkq0ZyymP",
+            "subscriptionKey": "wl3Ce5Q0+idUw6tpVO0TwQ==!HtK3usf1cBKSd3iBCvvDrSUCEjSj3R2PJrqFC6cyTFurrj3z946UjGMliTUpIAHS",
             "version": "0.1"
         },
         {
             "type": "blob",
-            "connectionString": "qwZX8uQWqaI5iqpqibyypw==!7lnG9HNK92zBtnWP9J+4i7/Zpkppgr4YhXQRD8XZsdSVnJyrr2kSbF4H8W+wH/irq/Rv3f5sXjubVC743Hxn2/oq658zIC2lKve9tOMJm+YcuMNjWHGuttmy9q4xrY3gQUvYebd+t4eV1+nlwSwuIf3HxpWtGnh7au2UbK6EBvOKPxBqipt/CuiUQfDDNsmDPhas463SNZiC6Tn83QDmEkO9wO0n4yUpApnJqIwJFWmnSztp4hzfLDOPdixrUaa3",
+            "connectionString": "NHFTNWDkHJ5533Lv2wM5oA==!ojpdL+GOMnROSNp+v6ypvm5+X7Xj1yqHO1BdJw1QhhsSKJmQqiN1nAiwYPWNdrlEbydxVn3qJschEiK8A7uzIbrFFcsu1XsdCijv0MYRAuxtNAwYp/nGRrFQ60mU9V6d0dSGRccsJRD6ZcnjFJGe0HWgg+eWVsAEZfx9BxP9icyu+JDw9q+WFwekXttNHp6iEzBktLy2KXdHAVvv3HdIuTjYguzOhKewTBnCtDup4gNA3EXwyezYG9JC0rlfLGLB",
             "container": "testerbot",
+            "id": "179",
             "name": "v-micricStorage",
             "resourceGroup": "v-micricMAIN",
             "serviceName": "vmicrice2v6y",
             "subscriptionId": "0389857f-2464-451b-ac83-5f54d565b1a7",
-            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-            "id": "179"
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47"
+        },
+        {
+            "type": "qna",
+            "endpointKey": "WrDcrmqS63ECl6u57B45jQ==!myO/+kQE4mzuRaGsnhJL+U9nYh9T0df8xE94nBTVq3xGlnarsBLMOEk8lzGfIdiP",
+            "hostname": "https://v-micrictesterqna.azurewebsites.net",
+            "id": "39fd8f37-ddaa-40ea-af47-8f6adc0411b2",
+            "kbId": "39fd8f37-ddaa-40ea-af47-8f6adc0411b2",
+            "name": "BotBuilder FAQ",
+            "subscriptionKey": "mQL8sOq0abYFdv9LgdhJkw==!tsqls8RFwGvncXC+ONf+7/tzwWrWnkFeTEM+2SkGD78R7JA93PsSLzooSSBRvGAH"
         }
     ],
     "padlock": "f64Jj/FigXs1Rte75m3ZCA==!ZbawJSy396zJLbqo25GeeRc/usg0NjJUckpXL0h2TkXAQ4aPI6TmDnYqSiy4CZtF",
     "version": "2.0",
-    "path": "C:\\Users\\v-micric\\Documents\\Code\\Bots - Mine\\testerBot-Node\\v-micricTester.bot",
-    "overrides": null
+    "overrides": null,
+    "path": "C:\\Users\\v-micric\\Documents\\Code\\Bots - Mine\\testerBot-Node\\v-micricTester.bot"
 }

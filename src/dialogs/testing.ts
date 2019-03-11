@@ -2,10 +2,12 @@ import { BotAdapter, MemoryStorage } from 'botbuilder';
 import { BlobStorage, CosmosDbStorage } from 'botbuilder-azure';
 import { ChoicePrompt, ComponentDialog, WaterfallDialog, WaterfallStepContext } from 'botbuilder-dialogs';
 
+import { QnAMakerEndpoint } from 'botbuilder-ai';
 import utilities from '../resources/utilities';
 import { LuisDialog } from './luis';
 import { ProactiveDialog } from './proactive';
 import { PromptsDialog } from './prompts';
+import { QnaDialog } from './qnamaker';
 import { RichCardsDialog } from './richCards';
 
 const dialogIds = {
@@ -14,6 +16,7 @@ const dialogIds = {
     RICH_CARDS_DIALOG: 'richCardsDialog',
     PROACTIVE_DIALOG: 'proactiveDialog',
     LUIS_DIALOG: 'luisDialog',
+    QNA_DIALOG: 'qnaDialog',
 };
 
 const choices = {
@@ -31,7 +34,8 @@ export class TestingDialog extends ComponentDialog {
 
     constructor(dialogId: string,
                 adapter: BotAdapter,
-                myStorage: MemoryStorage|CosmosDbStorage|BlobStorage) {
+                myStorage: MemoryStorage|CosmosDbStorage|BlobStorage,
+                qnaEndpointSettings: QnAMakerEndpoint) {
         super(dialogId);
 
         // validate what was passed in
@@ -50,6 +54,7 @@ export class TestingDialog extends ComponentDialog {
         this.addDialog(new RichCardsDialog(dialogIds.RICH_CARDS_DIALOG));
         this.addDialog(new ProactiveDialog(dialogIds.PROACTIVE_DIALOG, adapter, myStorage));
         this.addDialog(new LuisDialog(dialogIds.LUIS_DIALOG));
+        this.addDialog(new QnaDialog(dialogIds.QNA_DIALOG, qnaEndpointSettings));
     }
 
     // Ask the user what they'd like to test and then load the appropriate dialogs for that
@@ -67,6 +72,8 @@ export class TestingDialog extends ComponentDialog {
                 return await step.replaceDialog(dialogIds.PROACTIVE_DIALOG, step.options);
             case choices.luis:
                 return await step.replaceDialog(dialogIds.LUIS_DIALOG, step.options);
+            case choices.qnaMaker:
+                return await step.replaceDialog(dialogIds.QNA_DIALOG);
             default:
                 return await step.endDialog();
         }

@@ -6,6 +6,7 @@ import * as path from 'path';
 import * as restify from 'restify';
 
 import { BotFrameworkAdapter, ConversationState, MemoryStorage, UserState } from 'botbuilder';
+import { QnAMakerEndpoint } from 'botbuilder-ai';
 import { BlobStorage, CosmosDbStorage } from 'botbuilder-azure';
 import { BlobStorageService, BotConfiguration, IEndpointService } from 'botframework-config';
 
@@ -95,10 +96,26 @@ const myStorage = cosmosStorage;
 const conversationState: ConversationState = new ConversationState(myStorage);
 const userState: UserState = new UserState(myStorage);
 
+// QnA Maker
+
+interface IQnAEdnpointSettings {
+    kbId: string;
+    endpointKey: string;
+    hostname: string;
+}
+
+const QNA_CONFIGURATION = 'BotBuilder FAQ';
+const qnaConfig = botConfig.findServiceByNameOrId(QNA_CONFIGURATION) as unknown as IQnAEdnpointSettings;
+const qnaEndpointSettings: QnAMakerEndpoint = {
+    knowledgeBaseId: qnaConfig.kbId,
+    endpointKey: qnaConfig.endpointKey,
+    host: qnaConfig.hostname,
+};
+
 // Create the main dialog.
 let testerBot;
 try {
-    testerBot = new TesterBot(conversationState, userState, botConfig, adapter, myStorage);
+    testerBot = new TesterBot(conversationState, userState, botConfig, adapter, myStorage, qnaEndpointSettings);
 } catch (err) {
     console.error(`[botInitialization Error]: ${err}`);
     process.exit();
