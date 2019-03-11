@@ -80,15 +80,24 @@ export class TesterBot {
     }
 
     public onTurn = async (context: TurnContext) => {
+
+        const luisDialogIdSubstring = 'luis';
+
         const dc = await this.dialogs.createContext(context);
 
         if (context.activity.type === ActivityTypes.Message) {
             let dialogResult: DialogTurnResult;
-
-            // Perform a call to LUIS to retreive results for the current activity message
-            const luisResults = await this.luisRecognizer.recognize(context);
-            const topIntent = LuisRecognizer.topIntent(luisResults);
-
+            let luisResults: RecognizerResult;
+            luisResults = await this.luisRecognizer.recognize(context);
+            let topIntent;
+            // Perform a call to LUIS to retreive results for the current activity message (if in appropriate dialog by id substring)
+            if (dc.activeDialog && dc.activeDialog.id.includes(luisDialogIdSubstring)) {
+                luisResults = await this.luisRecognizer.recognize(context);
+                topIntent = LuisRecognizer.topIntent(luisResults);
+            } else {
+                luisResults = null;
+                topIntent = 'None';
+            }
             // Based on LUIS topIntent, evaluate if we have an interruption.
             // Interruption here refers to user looking for help/ cancel existing dialog
             const interrupted = await this.isTurnInterrupted(dc, luisResults);
