@@ -77,7 +77,7 @@ export class ProactiveDialog extends ComponentDialog {
             case choices.CLOSE:
                 return await step.replaceDialog(dialogIds.INITIATE_CLOSE);
             default:
-                return await step.endDialog();
+                return await step.replaceDialog(utilities.getTestingDialogId());
         }
         return await step.replaceDialog(dialogIds.PROACTIVE_MAIN, step.options);
     }

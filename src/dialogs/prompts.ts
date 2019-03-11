@@ -115,7 +115,7 @@ export class PromptsDialog extends ComponentDialog {
                 return await step.beginDialog(dialogIds.ATTACHMENT);
             case choices.back:
             default:
-                return await step.endDialog();
+                return await step.replaceDialog(utilities.getTestingDialogId());
         }
     }
 

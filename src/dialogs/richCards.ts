@@ -81,7 +81,7 @@ export class RichCardsDialog extends ComponentDialog {
                 return await this.createVideo(step);
             case choices.back:
             default:
-                return await step.endDialog();
+                return await step.replaceDialog(utilities.getTestingDialogId());
         }
     }
 

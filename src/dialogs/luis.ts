@@ -5,6 +5,7 @@ import utilities from '../resources/utilities';
 const choices = {
     INTENT: 'Intent/Entity',
     INTERRUPTION: 'Interruption',
+    BACK: 'Back',
 };
 
 const dialogIds = {
@@ -66,8 +67,9 @@ export class LuisDialog extends ComponentDialog {
                 return await step.replaceDialog(dialogIds.LUIS_INTENT);
             case choices.INTERRUPTION:
                 return await step.replaceDialog(dialogIds.LUIS_INTERRUPTION);
+            case choices.BACK:
             default:
-                return await step.endDialog();
+                return await step.replaceDialog(utilities.getTestingDialogId());
         }
     }
 
