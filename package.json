@@ -20,7 +20,7 @@
     "dependencies": {
         "botbuilder": "^4.3.2",
         "botbuilder-ai": "^4.3.2",
-        "botbuilder-azure": "^4.3.2",
+        "botbuilder-azure": "^4.5.0",
         "botbuilder-config": "^0.5.1",
         "botbuilder-core": "^4.3.2",
         "botbuilder-dialogs": "^4.3.2",
